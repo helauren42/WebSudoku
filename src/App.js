@@ -58,10 +58,10 @@ class AbstractBoard {
 		// while (length % 4 != 0 && length % 9 != 0) {
 		// 	length++
 		// }
-		startX = (parentWidth * 0.45) / 2
+		startX = (parentWidth * 0.28)
 		startY = parentHeight * 0.1 // + (windowHeight - (navbarrects.height + length)) * 0.1
-		canvas.width = length * 1.1
-		canvas.height = length * 1.1
+		canvas.width = length * 1.2
+		canvas.height = length * 1.2
 		canvas.style.position = 'relative'
 		canvas.style.left = `${startX}px`
 		canvas.style.top = `${startY}px`
@@ -118,10 +118,10 @@ class AbstractBoard {
 		this.ctx.fillRect(10, 10, this.length, this.length)
 
 		this.ctx.lineWidth = 4
-		this.ctx.strokeStyle = '#374141'
+		this.ctx.strokeStyle = '#343d39'
 		this.ctx.stroke()
 
-		this.ctx.fillStyle = '#374141'
+		this.ctx.fillStyle = '#455c52'
 		for (let y = 0; y < 9; y++) {
 			console.log("y:", puzzle[y])
 			for (let x = 0; x < 9; x++) {
@@ -181,6 +181,7 @@ const App = () => {
 			<Navbar />
 			<div id="body-content">
 				<HandleBoard />
+				{/* <GameButtons /> */}
 			</div>
 		</>
 	)
