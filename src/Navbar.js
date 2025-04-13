@@ -32,7 +32,7 @@ export const Navbar = () => {
 			<h1 id="title">Sudoku</h1>
 			<div id="nav-menu">
 				<button className='nav-button'>Rankings</button>
-				<button className='nav-button'>Play</button>
+				<button className='nav-button'>Quick Game</button>
 			</div>
 			<div id="user-section">
 				<img id="user-icon" src={UserIcon}></img>

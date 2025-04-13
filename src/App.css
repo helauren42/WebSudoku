@@ -40,10 +40,16 @@ body {
 	border-color: #343d39;
 	color: #343d39;
 	background-color: #bfd2cc;
+	user-select: none;
+	font-size: 1rem;
 }
 
 #start-restart {
 	position: relative;
+}
+
+#start-restart:hover {
+	cursor: pointer;
 }
 
 #select-difficulty {

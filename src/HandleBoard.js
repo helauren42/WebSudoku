@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
+import { GameState } from "./Const";
 // puzzle -> blocks -> cells
 
 class Cell {
@@ -55,7 +56,6 @@ class AbstractBoard {
 		this.length = length
 		this.cellLength = length / 9
 		this.canvas = canvas
-		console.log(this.canvas)
 		this.ctx = canvas.getContext('2d')
 		return
 	}
@@ -107,7 +107,6 @@ class AbstractBoard {
 
 		this.ctx.fillStyle = '#455c52'
 		for (let y = 0; y < 9; y++) {
-			console.log("y:", puzzle[y])
 			for (let x = 0; x < 9; x++) {
 				let cellX = x * this.cellLength + 10
 				let cellY = y * this.cellLength + 10
@@ -115,12 +114,9 @@ class AbstractBoard {
 				this.ctx.rect(cellX, cellY, this.cellLength, this.cellLength)
 				this.ctx.stroke()
 
-				console.log(puzzle[y][x].value)
-				console.log(typeof (puzzle[y][x].value))
 				const character = String(puzzle[y][x].value)
 				if (character == 0)
 					continue
-				console.log("drawing: ", character)
 				let midx = cellX + (this.cellLength / 2)
 				let midy = cellY + (this.cellLength / 2)
 				this.ctx.font = `${this.cellLength * 0.8}px Roboto Slab`;
@@ -153,7 +149,7 @@ export const HandleBoard = ({ activeGame }) => {
 		else {
 			console.log("drawing dynamic puzzle")
 		}
-	}, [])
+	}, [activeGame])
 
 	return (
 		<></>

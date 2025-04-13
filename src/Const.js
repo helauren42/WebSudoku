@@ -1,4 +1,7 @@
 export const PROJECT_SRC = "/home/henri/Projects/WebSudoku/src/"
-// export const PROJECT_DIR = "../"
 
-
+export const GameState = Object.freeze({
+	EASY: 0,
+	MEDIUM: 1,
+	HARD: 2
+})
