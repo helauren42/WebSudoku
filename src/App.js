@@ -3,45 +3,51 @@ import { Navbar, setUserSectionWidth } from './Navbar';
 import { HandleBoard } from './HandleBoard';
 import './App.css'
 
-const GameButtons = () => {
-	const [active, setActive] = useState(false)
+const GameButtons = ({ activeGame }) => {
 	useEffect(() => {
-		const gameItems = document.getElementById('game-items');
+		const bodyContent = document.getElementById("body-content")
+		const gameButtons = document.getElementById('game-buttons');
 		const startRestart = document.getElementById('start-restart');
-		const canvas = document.getElementById('my-canvas');
+		const selectDifficulty = document.getElementById('select-difficulty');
 
-		if (!canvas || !gameItems || !startRestart) return; // Guard against null elements
+		startRestart.classList.add("playButtons")
+		selectDifficulty.classList.add("playButtons")
 
 		if (window.innerHeight > window.innerWidth) {
 			// Mobile app logic
-			gameItems.style.flexDirection = 'column'
+			bodyContent.style.flexDirection = 'column'
+			gameButtons.style.flexDirection = 'row'
 		} else {
-			// Calculate position
-			gameItems.style.flexDirection = 'row'
+			bodyContent.style.flexDirection = 'row'
+			gameButtons.style.flexDirection = 'column'
 			startRestart.style.top = "50%"
-
 		}
-	}, []) // Empty dependency array is fine since this runs once on mount
+		// startRestart.addEventListener(() => {
+		//
+		// })
+	}, [])
 
 	return (
-		<div id="game-items">
-			<button id="start-restart">{active ? 'restart' : 'start'}</button>
-			{/* <select id="select-difficulty"> */}
-			{/* 	<option value="Easy">Easy</option> */}
-			{/* 	<option value="Intermediate">Intermediate</option> */}
-			{/* 	<option value="Advanced">Advanced</option> */}
-			{/* </select> */}
+		<div id="game-buttons">
+			<button id="start-restart">{activeGame ? 'Restart' : 'Start'}</button>
+			<select id="select-difficulty">
+				<option value="Easy">Easy</option>
+				<option value="Intermediate">Intermediate</option>
+				<option value="Advanced">Advanced</option>
+			</select>
 		</div>
 	)
 }
 
 const App = () => {
+	const [activeGame, setActiveGame] = useState(false)
 	return (
 		<>
 			<Navbar />
 			<div id="body-content">
-				<GameButtons />
-				<HandleBoard />
+				<GameButtons active={activeGame} setActive{...setActiveGame} />
+				<canvas id="my-canvas"></canvas>
+				<HandleBoard active={activeGame} setActive{...setActiveGame} />
 				<canvas id="timer-canvas"></canvas>
 			</div>
 		</>

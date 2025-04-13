@@ -33,14 +33,11 @@ class AbstractBoard {
 		this.staticPuzzle = this.getStaticPuzzle();
 	}
 	makeCanvas() {
-		let startX;
 		let startY;
 		let length;
 
-		let canvas = document.createElement('canvas')
-		canvas.id = "my-canvas"
+		let canvas = document.getElementById('my-canvas')
 		let body_content = document.getElementById('body-content')
-		body_content.appendChild(canvas)
 		let parentHeight = body_content.getBoundingClientRect().height
 		let parentWidth = body_content.getBoundingClientRect().width
 
@@ -50,16 +47,10 @@ class AbstractBoard {
 		else {
 			length = parentHeight * 0.85
 		}
-		// while (length % 4 != 0 && length % 9 != 0) {
-		// 	length++
-		// }
-		startY = parentHeight * 0.1
 		canvas.width = length * 1.1
 		canvas.height = length * 1.05
 		canvas.style.position = 'relative'
 		canvas.style.top = `${startY}px`
-		// canvas.style.display = 'block'
-		canvas.style.marginBottom = '15%'
 
 		this.length = length
 		this.cellLength = length / 9
@@ -151,14 +142,16 @@ class Board extends AbstractBoard {
 	}
 }
 
-export const HandleBoard = () => {
-	const [active, setActive] = useState(false)
+export const HandleBoard = ({ activeGame }) => {
 
 	useEffect(() => {
 		let board = new Board();
-		if (!active) {
+		if (!activeGame) {
 			console.log("drawing static puzzle")
 			board.drawStaticPuzzle()
+		}
+		else {
+			console.log("drawing dynamic puzzle")
 		}
 	}, [])
 
