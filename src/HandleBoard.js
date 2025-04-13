@@ -37,10 +37,8 @@ class AbstractBoard {
 		let startY;
 		let length;
 
-		let navbar = document.getElementById('navbar')
-		let navbarrects = navbar.getBoundingClientRect()
-		console.log(navbarrects)
 		let canvas = document.createElement('canvas')
+		canvas.id = "my-canvas"
 		let body_content = document.getElementById('body-content')
 		body_content.appendChild(canvas)
 		let parentHeight = body_content.getBoundingClientRect().height
@@ -55,15 +53,13 @@ class AbstractBoard {
 		// while (length % 4 != 0 && length % 9 != 0) {
 		// 	length++
 		// }
-		startX = (parentWidth * 0.28)
-		startY = parentHeight * 0.1 // + (windowHeight - (navbarrects.height + length)) * 0.1
-		canvas.width = length * 1.2
-		canvas.height = length * 1.2
+		startY = parentHeight * 0.1
+		canvas.width = length * 1.1
+		canvas.height = length * 1.05
 		canvas.style.position = 'relative'
-		canvas.style.left = `${startX}px`
 		canvas.style.top = `${startY}px`
-		canvas.style.display = 'block'
-		canvas.style.marginBottom = '20%'
+		// canvas.style.display = 'block'
+		canvas.style.marginBottom = '15%'
 
 		this.length = length
 		this.cellLength = length / 9
@@ -167,8 +163,7 @@ export const HandleBoard = () => {
 	}, [])
 
 	return (
-		<div id="board-container">
-		</div>
+		<></>
 	)
 }
 

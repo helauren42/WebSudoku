@@ -19,6 +19,25 @@ body {
 
 #body-content {
 	position: absolute;
-	height: 80%;
+	height: 75%;
 	width: 100%;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	background-color: blue;
+}
+
+#start-restart {
+	position: relative;
+}
+
+#select-difficulty {
+	position: relative;
+	z-index: 999;
+}
+
+#timer-canvas {
+	background-color: red;
+	width: 100px;
+	height: 50px;
 }
