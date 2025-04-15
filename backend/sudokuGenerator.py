@@ -7,15 +7,15 @@ class GameLevel(Enum):
     MEDIUM = 1
     HARD = 2
 
-async def sudokuGenerator(level: GameLevel):
+def sudokuGenerator(level: GameLevel):
     while True:
         grid = generate_solved_grid()
         puzzle = [row[:] for row in grid]
         if level == GameLevel.EASY:
-            remove_count = 41
+            remove_count = 37
         elif level == GameLevel.MEDIUM:
-            remove_count = 46
-        else:  # HARD
+            remove_count = 44
+        else:
             remove_count = 51
         remove_cells(puzzle, remove_count)
         if count_solutions(puzzle) == 1:
@@ -102,9 +102,10 @@ def print_sudoku(grid):
         if row % 3 == 2:
             print(horizontal_separator)
 
-async def test_sudoku():
-    grid = await sudokuGenerator(GameLevel.HARD)
+def test_sudoku():
+    grid =sudokuGenerator(GameLevel.HARD)
     print_sudoku(grid)
 
 if __name__ == "__main__":
-    asyncio.run(test_sudoku())
+    test_sudoku()
+

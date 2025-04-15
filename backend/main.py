@@ -1,19 +1,22 @@
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 import uvicorn
+from threading import Thread
+from const import HOST, PORT
+from sudokuGenerator import GameLevel, sudokuGenerator
 
 app = FastAPI()
-
-    
 
 @app.get("/")
 async def home():
     pass
 
-@app.get("/{level}")
-async def fetchSudokuPuzzle(level: int):
-    pass
+@app.get("/fetchPuzzle/{level}")
+def fetchPuzzle(level: int):
+    ret = []
+    print("fetched: ", ret)
+    return ret
 
 if __name__ == "__main__":
-    uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)
+    # sudokuCache.makeSudokusConcurrently()
+    uvicorn.run(app="main:app", host=HOST, port=PORT, workers=1)
+
