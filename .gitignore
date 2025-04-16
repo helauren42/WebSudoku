@@ -11,3 +11,6 @@ TESTER
 __pycache__
 .env
 venv
+puzzles
+basePuzzles
+
