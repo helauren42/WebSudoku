@@ -45,17 +45,18 @@ def generate_1000_sudoku_solutions():
             solutions.append([row[:] for row in grid])
     return solutions
 
-solutions = generate_1000_sudoku_solutions()
-print(f"Generated {len(solutions)} unique Sudoku solutions")
+if __name__ == "__main__":
+    solutions = generate_1000_sudoku_solutions()
+    print(f"Generated {len(solutions)} unique Sudoku solutions")
 
-subprocess.run(["mkdir", "-p", "basePuzzles"])
+    subprocess.run(["mkdir", "-p", "basePuzzles"])
 
-count = 1
-for solution in solutions:
-    with open(f"basePuzzles/{count}.txt", "w") as file:
-        for row in solution:
-            for num in row:
-                file.write(str(num))
-            file.write("\n")
+    count = 1
+    for solution in solutions:
+        with open(f"basePuzzles/{count}.txt", "w") as file:
+            for row in solution:
+                for num in row:
+                    file.write(str(num))
+                file.write("\n")
     count += 1
 

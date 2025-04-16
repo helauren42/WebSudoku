@@ -1,8 +1,9 @@
 from fastapi import FastAPI
+from fastapi import responses
 import uvicorn
-from threading import Thread
-from const import HOST, PORT
-from sudokuGenerator import GameLevel, sudokuGenerator
+import random
+
+from const import HOST, PORT, PROJECT_DIR
 
 app = FastAPI()
 
@@ -10,11 +11,29 @@ app = FastAPI()
 async def home():
     pass
 
+async def getPath(level: int) -> str:
+    difficulty = ""
+    match level:
+        case 0:
+            difficulty = "easy/"
+        case 1:
+            difficulty = "medium/"
+        case 2:
+            difficulty = "hard/"
+        case 3:
+            difficulty = "extreme/"
+    path = PROJECT_DIR + "backend/puzzles/" + difficulty
+    num = random.randint(1, 1000)
+    path += str(num) + ".txt"
+    return path
+
 @app.get("/fetchPuzzle/{level}")
-def fetchPuzzle(level: int):
-    ret = []
-    print("fetched: ", ret)
-    return ret
+async def fetchPuzzle(level: int):
+    path = await getPath(level)
+    print(f"path: {path}")
+    with open(path, "r") as file:
+        lines = file.readlines()
+    return responses.JSONResponse(lines, 200)
 
 if __name__ == "__main__":
     # sudokuCache.makeSudokusConcurrently()

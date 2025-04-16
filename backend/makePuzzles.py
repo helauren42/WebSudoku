@@ -1,4 +1,3 @@
-from os import stat
 from sudokuGenerator.sudoku_generator import getPuzzle
 from const import PROJECT_DIR
 import subprocess
@@ -48,3 +47,4 @@ def main():
     makePuzzles.startThreads()
 
 main()
+
