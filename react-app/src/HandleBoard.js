@@ -1,17 +1,23 @@
 import { Board } from './Board.js';
 import { useState, useEffect } from 'react';
 
-export const HandleBoard = ({ activeGame, currentLevel, clickedX, clickedY, BOARD }) => {
-	useEffect(() => {
-		if (!BOARD)
-			BOARD = new Board()
-	}, [clickedX, clickedY])
+let BOARD = null
+
+/**
+ * @param {boolean} activeGame
+ * @param {number} currentLevel
+ * @param {number} clickedX
+ * @param {number} clickedY
+ * @param {Board|null} BOARD
+*/
+export const HandleBoard = ({ activeGame, currentLevel, clickedX, clickedY }) => {
+	console.log("handleBoard called")
 
 	useEffect(() => {
 		if (!BOARD)
 			BOARD = new Board()
-		BOARD.display(activeGame, currentLevel)
-	}, [activeGame])
+		BOARD.draw(activeGame, currentLevel)
+	}, [activeGame, clickedX, clickedY])
 	return (
 		<></>
 	)

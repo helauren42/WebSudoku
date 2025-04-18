@@ -183,7 +183,7 @@ export class Board extends AbstractBoard {
 		})
 		return this.makeDynamicPuzzle(arrayPuzzle)
 	}
-	display(activeGame, currentLevel) {
+	draw(activeGame, currentLevel) {
 		if (!activeGame) {
 			console.log("drawing static puzzle")
 			this.drawStaticPuzzle()
