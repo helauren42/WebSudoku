@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { Navbar, setUserSectionWidth } from './Navbar';
 import { HandleBoard } from './HandleBoard';
 import { GameButtons } from './GameButtons.js'
-import { GameState } from "./Const";
 import './App.css'
 
 const App = () => {
 	const [activeGame, setActiveGame] = useState(false)
-	const [currentLevel, setCurrentLevel] = useState(GameState.EASY)
+	const [clickedX, setClickedX] = useState(0)
+	const [clickedY, setClickedY] = useState(0)
+	const [currentLevel, setCurrentLevel] = useState(0)
 	return (
 		<>
 			<Navbar />
