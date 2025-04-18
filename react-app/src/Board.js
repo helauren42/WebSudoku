@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { SOCKET_ADDRESS } from './Const';
-// puzzle -> cells
-
+// game -> puzzle -> cells
+//		-> level
 class Cell {
 	constructor() {
 		this.value = null
@@ -20,18 +20,20 @@ class Cell {
 }
 
 class Game {
-	constructor(difficulty) {
-		this.difficulty = difficulty;
-	}
-	updateArrayPuzzle() {
+	constructor(level, puzzle) {
+		this.level = level
+		this.puzzle = puzzle
 	}
 }
 
 class AbstractBoard {
 	constructor() {
 		this.makeCanvas()
-		this.staticPuzzle = this.getStaticPuzzle();
-		this.dynamicPuzzle = null;
+		this.game = null
+		this.staticPuzzle = this.getStaticPuzzle()
+		this.row = null
+		this.column = null
+		this.msc = 10
 	}
 	makeCanvas() {
 		let startY;
@@ -123,6 +125,12 @@ class AbstractBoard {
 		}
 
 	}
+
+	drawCell(cellX, cellY) {
+		this.ctx.beginPath()
+		this.ctx.rect(cellX, cellY, this.cellLength, this.cellLength)
+		this.ctx.stroke()
+	}
 	/**
 	 * @param {Cell[][]} puzzle - 2D array of Cell objects
 	 */
@@ -137,12 +145,9 @@ class AbstractBoard {
 		this.ctx.fillStyle = '#455c52'
 		for (let y = 0; y < 9; y++) {
 			for (let x = 0; x < 9; x++) {
-				let cellX = x * this.cellLength + 10
-				let cellY = y * this.cellLength + 10
-				this.ctx.beginPath()
-				this.ctx.rect(cellX, cellY, this.cellLength, this.cellLength)
-				this.ctx.stroke()
-
+				let cellX = x * this.cellLength + this.msc
+				let cellY = y * this.cellLength + this.msc
+				this.drawCell(cellX, cellY)
 				const character = puzzle[y][x].value
 				if (character === 0) {
 					if (puzzle[y][x].notes.length > 0)
@@ -167,10 +172,12 @@ export class Board extends AbstractBoard {
 	}
 	async drawDynamicPuzzle(currentLevel) {
 		console.log("drawDynamicPuzzle: ", currentLevel)
-		if (!this.dynamicPuzzle)
-			this.dynamicPuzzle = await this.fetchDynamicPuzzle(currentLevel);
-		console.log(this.dynamicPuzzle)
-		this.drawPuzzle(this.dynamicPuzzle)
+		if (!this.game || this.game.level != currentLevel) {
+			console.log("new game different level")
+			const puzzle = await this.fetchDynamicPuzzle(currentLevel);
+			this.game = new Game(currentLevel, puzzle)
+		}
+		this.drawPuzzle(this.game.puzzle)
 	}
 	async fetchDynamicPuzzle(currentLevel) {
 		const url = "http://" + SOCKET_ADDRESS + '/fetchPuzzle/' + currentLevel
@@ -183,6 +190,24 @@ export class Board extends AbstractBoard {
 		})
 		return this.makeDynamicPuzzle(arrayPuzzle)
 	}
+	updateSelection(clickedX, clickedY) {
+		const newcolumn = Math.floor(this.cellLength / clickedX)
+		const newrow = Math.ceil(this.cellLength / clickedY)
+		if (this.column == newcolumn && this.row == newrow) {
+			this.column = null;
+			this.newrow = null;
+			return
+		}
+		this.column = newcolumn
+		this.row = newrow
+	}
+	drawSelectedCell() {
+		console.log("drawing selected cell")
+		this.ctx.fillStyle = "#377b70"
+		const cellX = this.msc + this.cellLength * this.column
+		const cellY = this.msc + this.cellLength * this.row
+		this.drawCell(cellX, cellY)
+	}
 	draw(activeGame, currentLevel) {
 		if (!activeGame) {
 			console.log("drawing static puzzle")
@@ -191,7 +216,12 @@ export class Board extends AbstractBoard {
 		else {
 			console.log("drawing dynamic puzzle level: ", currentLevel)
 			this.drawDynamicPuzzle(currentLevel)
+			if (this.column && this.row)
+				this.drawSelectedCell()
 		}
+	}
+	giveUp() {
+		this.game = null
 	}
 }
 

@@ -10,14 +10,26 @@ let BOARD = null
  * @param {number} clickedY
  * @param {Board|null} BOARD
 */
-export const HandleBoard = ({ activeGame, currentLevel, clickedX, clickedY }) => {
+export const HandleBoard = ({ activeGame, currentLevel, canvasClickedX, canvasClickedY }) => {
 	console.log("handleBoard called")
 
 	useEffect(() => {
 		if (!BOARD)
 			BOARD = new Board()
+		if (activeGame)
+			BOARD.updateSelection(canvasClickedX, canvasClickedY)
+	}, [canvasClickedX, canvasClickedY])
+	useEffect(() => {
+		if (!BOARD)
+			BOARD = new Board()
+		if (!activeGame)
+			BOARD.giveUp();
+	}, [activeGame])
+	useEffect(() => {
+		if (!BOARD)
+			BOARD = new Board()
 		BOARD.draw(activeGame, currentLevel)
-	}, [activeGame, clickedX, clickedY])
+	}, [activeGame, canvasClickedX, canvasClickedY])
 	return (
 		<></>
 	)
