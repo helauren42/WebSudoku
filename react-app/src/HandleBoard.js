@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { GameState } from "./Const";
+import { SOCKET_ADDRESS } from './Const';
 // puzzle -> cells
 
 class Cell {
@@ -93,9 +93,35 @@ class AbstractBoard {
 		this.fillPuzzle(sudokuGrid, puzzle)
 		return puzzle
 	}
+	makeSudokuGrid(array) {
+		let ret = []
+		for (let i = 0; array[i]; i++) {
+			const string = array[i]
+			let row = []
+			for (let j = 0; string[j]; j++) {
+				row.push(parseInt(string[j]))
+			}
+			ret.push(row)
+		}
+		return ret
+	}
+	makeDynamicPuzzle(array) {
+		let puzzle = this.makePuzzleStructure()
+		const sudokuGrid = this.makeSudokuGrid(array)
+		this.fillPuzzle(sudokuGrid, puzzle)
+		return puzzle
+	}
 	clearBoard() {
 		this.ctx.fillStyle = '#bfd2cc'
 		this.ctx.fillRect(10, 10, this.length, this.length)
+	}
+	drawNotes(cellX, cellY) {
+		const dim = this.cellLength / 3
+		let i = 0;
+		for (let line = 1; line <= 3; line++) {
+
+		}
+
 	}
 	/**
 	 * @param {Cell[][]} puzzle - 2D array of Cell objects
@@ -117,9 +143,12 @@ class AbstractBoard {
 				this.ctx.rect(cellX, cellY, this.cellLength, this.cellLength)
 				this.ctx.stroke()
 
-				const character = String(puzzle[y][x].value)
-				if (character == 0)
+				const character = puzzle[y][x].value
+				if (character === 0) {
+					if (puzzle[y][x].notes.length > 0)
+						this.drawNotes(cellX, cellY)
 					continue
+				}
 				let midx = cellX + (this.cellLength / 2)
 				let midy = cellY + (this.cellLength / 2)
 				this.ctx.font = `${this.cellLength * 0.8}px Roboto Slab`;
@@ -133,20 +162,34 @@ class AbstractBoard {
 }
 
 class Board extends AbstractBoard {
-	constructor() {
-		super()
-	}
 	drawStaticPuzzle() {
 		this.drawPuzzle(this.staticPuzzle)
 	}
-	drawDynamicPuzzle() {
-		// if(!this.dynamicPuzzle)
-		// 	this.fetchDynamicPuzzle();
+	async drawDynamicPuzzle(currentLevel) {
+		console.log("drawDynamicPuzzle: ", currentLevel)
+		if (!this.dynamicPuzzle)
+			this.dynamicPuzzle = await this.fetchDynamicPuzzle(currentLevel);
+		console.log(this.dynamicPuzzle)
 		this.drawPuzzle(this.dynamicPuzzle)
+	}
+	async fetchDynamicPuzzle(currentLevel) {
+		const url = "http://" + SOCKET_ADDRESS + '/fetchPuzzle/' + currentLevel
+		console.log(url)
+		const arrayPuzzle = await fetch(url).then((res) => {
+			return res.json()
+		}
+		).then((data) => {
+			return JSON.parse(data)
+		})
+		return this.makeDynamicPuzzle(arrayPuzzle)
 	}
 }
 
-export const HandleBoard = ({ activeGame }) => {
+export const HandleBoard = ({ activeGame, currentLevel, clickedX, clickedY }) => {
+	useEffect(() => {
+
+	}, [clickedX, clickedY])
+
 	useEffect(() => {
 		let board = new Board();
 		if (!activeGame) {
@@ -154,8 +197,8 @@ export const HandleBoard = ({ activeGame }) => {
 			board.drawStaticPuzzle()
 		}
 		else {
-			console.log("drawing dynamic puzzle")
-			board.drawDynamicPuzzle()
+			console.log("drawing dynamic puzzle level: ", currentLevel)
+			board.drawDynamicPuzzle(currentLevel)
 		}
 	}, [activeGame])
 	return (

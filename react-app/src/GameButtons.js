@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { GameState } from "./Const";
 
 export const GameButtons = ({ activeGame, setActiveGame, currentLevel, setCurrentLevel }) => {
 	useEffect(() => {
@@ -20,13 +19,16 @@ export const GameButtons = ({ activeGame, setActiveGame, currentLevel, setCurren
 		console.log("updating level: ", e.target.value)
 		switch (e.target.value) {
 			case "Easy":
-				setCurrentLevel(GameState.EASY)
+				setCurrentLevel(0)
 				break
 			case "Medium":
-				setCurrentLevel(GameState.MEDIUM)
+				setCurrentLevel(1)
 				break
 			case "Hard":
-				setCurrentLevel(GameState.Hard)
+				setCurrentLevel(2)
+				break
+			case "Extreme":
+				setCurrentLevel(3)
 				break
 			default:
 				break
@@ -49,6 +51,7 @@ export const GameButtons = ({ activeGame, setActiveGame, currentLevel, setCurren
 				<option value="Easy">Easy</option>
 				<option value="Medium">Medium</option>
 				<option value="Hard">Hard</option>
+				<option value="Extreme">Extreme</option>
 			</select>
 		</div >
 	)

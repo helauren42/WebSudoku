@@ -1,7 +1,4 @@
+export const SOCKET_ADDRESS = "127.0.0.1:5463"
+
 export const PROJECT_SRC = "/home/henri/Projects/WebSudoku/src/"
 
-export const GameState = Object.freeze({
-	EASY: 0,
-	MEDIUM: 1,
-	HARD: 2
-})
