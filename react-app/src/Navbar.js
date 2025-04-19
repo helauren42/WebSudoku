@@ -29,14 +29,16 @@ export const Navbar = () => {
 
 	return (
 		<div id="navbar">
-			<h1 id="title">Sudoku</h1>
-			<div id="nav-menu">
-				<button className='nav-button'>Rankings</button>
-				<button className='nav-button'>Quick Game</button>
-			</div>
-			<div id="user-section">
-				<img id="user-icon" src={UserIcon}></img>
-				<p id="user-text">{loggedin ? 'account' : 'login'}</p>
+			<div id="navbar-elements">
+				<h1 id="title">Sudoku</h1>
+				<div id="nav-menu">
+					<button className='nav-button'>Rankings</button>
+					<button className='nav-button'>Play</button>
+				</div>
+				<div id="user-section">
+					<img id="user-icon" src={UserIcon}></img>
+					<p id="user-text">{loggedin ? 'account' : 'login'}</p>
+				</div>
 			</div>
 		</div >
 	)

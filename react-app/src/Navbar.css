@@ -1,20 +1,27 @@
 #navbar {
-	position: relative;
-	/* width: 100%; */
-	padding: 1rem;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	flex-direction: row;
+	width: 100%;
 	background-color: #9ab7b4;
 	border-bottom: 0.01rem;
 	border-style: solid;
 	border-color: #343d39;
 	box-shadow: 0 2px 4px rgba(60, 82, 82, 0.5);
+	padding: 1rem;
+}
+
+#navbar-elements {
+	width: 90%;
+	justify-content: space-between;
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	margin: 0 auto;
+}
+
+#navbar-elements>* {
+	flex-basis: 33.33%;
 }
 
 #title {
-	position: relative;
 	font-size: 4rem;
 	text-shadow: 1px 1px 2px black;
 	user-select: none;
@@ -22,24 +29,27 @@
 
 #title:hover {
 	transform: scale(1.1);
+	transform-origin: left;
 	cursor: pointer;
 }
 
 #title:active {
 	transform: scale(0.9);
+	transform-origin: left;
 }
 
 #nav-menu {
 	position: relative;
 	display: flex;
-	gap: 1.5rem;
 	justify-content: space-around;
-	width: 15%;
 	color: rgb(249, 211, 180);
-	font-size: 2rem;
 }
 
 .nav-button {
+	margin: 0 auto;
+	box-sizing: border-box;
+	font-size: 1rem;
+	width: calc(11 * 1rem);
 	padding: 1rem;
 	border-width: 0.15rem;
 	border-style: solid;
@@ -65,23 +75,24 @@
 }
 
 #user-section {
-	position: relative;
 	display: flex;
 	justify-content: space-around;
 	flex-direction: column;
-	align-items: center;
+	align-items: flex-end;
 	font-size: 1rem;
 	user-select: none;
 }
 
 #user-section:hover {
 	transform: scale(1.1);
+	transform-origin: right;
 	cursor: pointer;
 	user-select: none;
 }
 
 #user-section:active {
 	transform: scale(0.9);
+	transform-origin: right;
 }
 
 #user-icon {
