@@ -24,7 +24,6 @@
 #title {
 	font-size: 4rem;
 	text-shadow: 1px 1px 2px black;
-	user-select: none;
 }
 
 #title:hover {
@@ -59,7 +58,6 @@
 	box-shadow: 0 2px 4px rgba(60, 82, 82, 0.5);
 	border-radius: 1rem;
 	background-color: #83978b;
-	user-select: none;
 }
 
 .nav-button:hover {

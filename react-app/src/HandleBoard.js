@@ -11,10 +11,10 @@ export const setClickPos = (clientX, clientY, activeGame, triggerClick, setCanva
 		setTriggerClick(1)
 	else
 		setTriggerClick(0)
-	const canvas = document.getElementById("my-canvas");
-	const rect = canvas.getBoundingClientRect();
-	const x = clientX - rect.left;
-	const y = clientY - rect.top;
+	const canvas = document.getElementById("my-canvas")
+	const rect = canvas.getBoundingClientRect()
+	const x = ((clientX - rect.left) / (rect.right - rect.left)) * canvas.width
+	const y = ((clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height
 	setCanvasClickedX(x);
 	setCanvasClickedY(y);
 }

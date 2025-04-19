@@ -141,11 +141,6 @@ class AbstractBoard {
 		this.drawCell(cellX, cellY)
 
 		// draw Number
-		console.log("!!! ", this.game.puzzle)
-		console.log(x)
-		console.log(y)
-		console.log(cellX)
-		console.log(cellY)
 		this.ctx.fillStyle = "#859c95";
 		this.drawInsideCell(x, y, cellX, cellY, this.game.puzzle)
 	}
@@ -155,6 +150,9 @@ class AbstractBoard {
 		this.ctx.stroke()
 	}
 	drawInsideCell(x, y, cellX, cellY, puzzle) {
+		console.log(puzzle)
+		console.log(x)
+		console.log(y)
 		const character = puzzle[y][x].value
 		if (character === 0) {
 			if (puzzle[y][x].notes.length > 0)
@@ -249,7 +247,7 @@ export class Board extends AbstractBoard {
 		else {
 			console.log("drawing dynamic puzzle level ", currentLevel)
 			this.drawDynamicPuzzle(currentLevel)
-			if (this.column && this.row)
+			if (this.column && this.row && this.column >= 1 && this.column <= 9 && this.row >= 1 && this.row <= 9)
 				this.drawSelectedCell()
 		}
 	}
