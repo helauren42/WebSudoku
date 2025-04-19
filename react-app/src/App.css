@@ -42,6 +42,8 @@ body {
 	background-color: #bfd2cc;
 	user-select: none;
 	font-size: 1rem;
+	padding: 0.6rem;
+	margin: 0.8rem 0rem;
 }
 
 #start-restart {

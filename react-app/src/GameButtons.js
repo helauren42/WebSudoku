@@ -5,7 +5,6 @@ export const GameButtons = ({ activeGame, setActiveGame, currentLevel, setCurren
 		const bodyContent = document.getElementById("body-content")
 		const gameButtons = document.getElementById('game-buttons');
 
-		console.log(`${activeGame ? "active game" : "no active game"}`)
 		if (window.innerHeight > window.innerWidth) {
 			bodyContent.style.flexDirection = 'column'
 			gameButtons.style.flexDirection = 'row'

@@ -56,6 +56,7 @@ class AbstractBoard {
 		canvas.style.top = `${startY}px`
 
 		this.length = length
+		this.noteCellLength = this.cellLength / 3
 		this.cellLength = length / 9
 		this.canvas = canvas
 		this.ctx = canvas.getContext('2d')
@@ -118,18 +119,56 @@ class AbstractBoard {
 		this.ctx.fillRect(10, 10, this.length, this.length)
 	}
 	drawNotes(cellX, cellY) {
-		const dim = this.cellLength / 3
-		let i = 0;
+		let startX = this.msc + this.cellLength * cellX
+		let startY = this.msc + this.cellLength * cellY
 		for (let line = 1; line <= 3; line++) {
 
 		}
-
 	}
+	drawSelectedCell() {
+		console.log("drawing selected cell")
+		const x = this.column - 1
+		const y = this.row - 1
+		const cellX = this.msc + this.cellLength * x
+		const cellY = this.msc + this.cellLength * y
+		// make background light color
+		this.ctx.fillStyle = "#bad6cf"
+		this.ctx.fillRect(cellX, cellY, this.cellLength, this.cellLength)
 
+		// make border
+		this.ctx.strokeStyle = "#859c95"
+		this.ctx.lineWidth = 4
+		this.drawCell(cellX, cellY)
+
+		// draw Number
+		console.log("!!! ", this.game.puzzle)
+		console.log(x)
+		console.log(y)
+		console.log(cellX)
+		console.log(cellY)
+		this.ctx.fillStyle = "#859c95";
+		this.drawInsideCell(x, y, cellX, cellY, this.game.puzzle)
+	}
 	drawCell(cellX, cellY) {
 		this.ctx.beginPath()
 		this.ctx.rect(cellX, cellY, this.cellLength, this.cellLength)
 		this.ctx.stroke()
+	}
+	drawInsideCell(x, y, cellX, cellY, puzzle) {
+		const character = puzzle[y][x].value
+		if (character === 0) {
+			if (puzzle[y][x].notes.length > 0)
+				this.drawNotes(cellX, cellY)
+			return
+		}
+		const midx = cellX + (this.cellLength / 2)
+		const midy = cellY + (this.cellLength / 2)
+		this.ctx.font = `${this.cellLength * 0.8}px Roboto Slab`;
+		const textSize = this.ctx.measureText(character)
+		const startX = midx - textSize.width / 2;
+		const startY = midy + (textSize.actualBoundingBoxAscent - textSize.actualBoundingBoxDescent) / 2;
+		this.ctx.fillText(character, startX, startY)
+
 	}
 	/**
 	 * @param {Cell[][]} puzzle - 2D array of Cell objects
@@ -138,46 +177,19 @@ class AbstractBoard {
 		this.ctx.fillStyle = '#bfd2cc'
 		this.ctx.fillRect(10, 10, this.length, this.length)
 
-		this.ctx.lineWidth = 4
+		this.ctx.lineWidth = 3
 		this.ctx.strokeStyle = '#343d39'
 		this.ctx.stroke()
 
 		this.ctx.fillStyle = '#455c52'
 		for (let y = 0; y < 9; y++) {
 			for (let x = 0; x < 9; x++) {
-				let cellX = x * this.cellLength + this.msc
-				let cellY = y * this.cellLength + this.msc
+				const cellX = x * this.cellLength + this.msc
+				const cellY = y * this.cellLength + this.msc
 				this.drawCell(cellX, cellY)
-				const character = puzzle[y][x].value
-				if (character === 0) {
-					if (puzzle[y][x].notes.length > 0)
-						this.drawNotes(cellX, cellY)
-					continue
-				}
-				let midx = cellX + (this.cellLength / 2)
-				let midy = cellY + (this.cellLength / 2)
-				this.ctx.font = `${this.cellLength * 0.8}px Roboto Slab`;
-				const textSize = this.ctx.measureText(character)
-				let startX = midx - textSize.width / 2;
-				let startY = midy + (textSize.actualBoundingBoxAscent - textSize.actualBoundingBoxDescent) / 2;
-				this.ctx.fillText(character, startX, startY)
+				this.drawInsideCell(x, y, cellX, cellY, puzzle)
 			}
 		}
-	}
-}
-
-export class Board extends AbstractBoard {
-	drawStaticPuzzle() {
-		this.drawPuzzle(this.staticPuzzle)
-	}
-	async drawDynamicPuzzle(currentLevel) {
-		console.log("drawDynamicPuzzle: ", currentLevel)
-		if (!this.game || this.game.level != currentLevel) {
-			console.log("new game different level")
-			const puzzle = await this.fetchDynamicPuzzle(currentLevel);
-			this.game = new Game(currentLevel, puzzle)
-		}
-		this.drawPuzzle(this.game.puzzle)
 	}
 	async fetchDynamicPuzzle(currentLevel) {
 		const url = "http://" + SOCKET_ADDRESS + '/fetchPuzzle/' + currentLevel
@@ -190,23 +202,44 @@ export class Board extends AbstractBoard {
 		})
 		return this.makeDynamicPuzzle(arrayPuzzle)
 	}
-	updateSelection(clickedX, clickedY) {
-		const newcolumn = Math.floor(this.cellLength / clickedX)
-		const newrow = Math.ceil(this.cellLength / clickedY)
-		if (this.column == newcolumn && this.row == newrow) {
+}
+
+export class Board extends AbstractBoard {
+	drawStaticPuzzle() {
+		this.drawPuzzle(this.staticPuzzle)
+	}
+	async drawDynamicPuzzle(currentLevel) {
+		console.log("drawDynamicPuzzle: ", currentLevel)
+		if (!this.game || this.game.level != currentLevel) {
+			console.log(`new game ${!this.game ? "no active game" : "different level"}`)
+			const puzzle = await this.fetchDynamicPuzzle(currentLevel);
+			this.game = new Game(currentLevel, puzzle)
+		}
+		this.drawPuzzle(this.game.puzzle)
+	}
+	updateSelection(canvasX, canvasY) {
+		canvasX -= this.msc
+		canvasY -= this.msc
+		console.log("updateSelection called")
+		console.log("canvasX: ", canvasX)
+		console.log("canvasY: ", canvasY)
+		const posX = canvasX / this.cellLength
+		const posY = canvasY / this.cellLength
+		console.log("posX: ", posX)
+		console.log("posY: ", posY)
+		const newcolumn = Math.ceil(posX)
+		const newrow = Math.ceil(posY)
+		if (this.column && this.row &&
+			(this.column < 1 || this.row < 1 || this.column > 9 || this.row > 9)
+			|| (this.column == newcolumn && this.row == newrow)) {
 			this.column = null;
 			this.newrow = null;
+			console.log("unselected cell")
 			return
 		}
 		this.column = newcolumn
 		this.row = newrow
-	}
-	drawSelectedCell() {
-		console.log("drawing selected cell")
-		this.ctx.fillStyle = "#377b70"
-		const cellX = this.msc + this.cellLength * this.column
-		const cellY = this.msc + this.cellLength * this.row
-		this.drawCell(cellX, cellY)
+		console.log(`selected cell(col: ${this.column}, row: ${this.row})`)
 	}
 	draw(activeGame, currentLevel) {
 		if (!activeGame) {
@@ -214,7 +247,7 @@ export class Board extends AbstractBoard {
 			this.drawStaticPuzzle()
 		}
 		else {
-			console.log("drawing dynamic puzzle level: ", currentLevel)
+			console.log("drawing dynamic puzzle level ", currentLevel)
 			this.drawDynamicPuzzle(currentLevel)
 			if (this.column && this.row)
 				this.drawSelectedCell()
@@ -222,6 +255,9 @@ export class Board extends AbstractBoard {
 	}
 	giveUp() {
 		this.game = null
+	}
+	resize() {
+		this.makeCanvas()
 	}
 }
 

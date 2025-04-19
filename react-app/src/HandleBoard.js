@@ -1,7 +1,23 @@
 import { Board } from './Board.js';
 import { useState, useEffect } from 'react';
 
-let BOARD = null
+export let BOARD = null
+
+
+export const setClickPos = (clientX, clientY, activeGame, triggerClick, setCanvasClickedX, setCanvasClickedY, setTriggerClick) => {
+	if (!activeGame)
+		return
+	if (triggerClick == 0)
+		setTriggerClick(1)
+	else
+		setTriggerClick(0)
+	const canvas = document.getElementById("my-canvas");
+	const rect = canvas.getBoundingClientRect();
+	const x = clientX - rect.left;
+	const y = clientY - rect.top;
+	setCanvasClickedX(x);
+	setCanvasClickedY(y);
+}
 
 /**
  * @param {boolean} activeGame
@@ -10,15 +26,17 @@ let BOARD = null
  * @param {number} clickedY
  * @param {Board|null} BOARD
 */
-export const HandleBoard = ({ activeGame, currentLevel, canvasClickedX, canvasClickedY }) => {
+export const HandleBoard = ({ activeGame, currentLevel, canvasClickedX, canvasClickedY, triggerClick }) => {
 	console.log("handleBoard called")
+
+
 
 	useEffect(() => {
 		if (!BOARD)
 			BOARD = new Board()
 		if (activeGame)
 			BOARD.updateSelection(canvasClickedX, canvasClickedY)
-	}, [canvasClickedX, canvasClickedY])
+	}, [canvasClickedX, canvasClickedY, triggerClick])
 	useEffect(() => {
 		if (!BOARD)
 			BOARD = new Board()
@@ -29,7 +47,7 @@ export const HandleBoard = ({ activeGame, currentLevel, canvasClickedX, canvasCl
 		if (!BOARD)
 			BOARD = new Board()
 		BOARD.draw(activeGame, currentLevel)
-	}, [activeGame, canvasClickedX, canvasClickedY])
+	}, [activeGame, canvasClickedX, canvasClickedY, triggerClick])
 	return (
 		<></>
 	)
