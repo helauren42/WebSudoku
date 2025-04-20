@@ -1,5 +1,5 @@
 import { Board } from './Board.js';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 export let BOARD = null
 
@@ -26,16 +26,14 @@ export const setClickPos = (clientX, clientY, activeGame, triggerClick, setCanva
  * @param {number} clickedY
  * @param {Board|null} BOARD
 */
-export const HandleBoard = ({ activeGame, currentLevel, canvasClickedX, canvasClickedY, triggerClick }) => {
+export const HandleBoard = ({ activeGame, currentLevel, triggerClick, canvasClickedX, canvasClickedY, setSelectedCell }) => {
 	console.log("handleBoard called")
-
-
 
 	useEffect(() => {
 		if (!BOARD)
 			BOARD = new Board()
 		if (activeGame)
-			BOARD.updateSelection(canvasClickedX, canvasClickedY)
+			setSelectedCell(BOARD.updateSelection(canvasClickedX, canvasClickedY))
 	}, [canvasClickedX, canvasClickedY, triggerClick])
 	useEffect(() => {
 		if (!BOARD)

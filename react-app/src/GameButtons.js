@@ -1,6 +1,40 @@
 import { useEffect } from "react";
 
-export const GameButtons = ({ activeGame, setActiveGame, currentLevel, setCurrentLevel }) => {
+export const RightSideButtons = ({ activeGame, selectedCell, BOARD }) => {
+	const buttonNumberClick = (stringNum) => {
+		const number = parseInt(stringNum)
+		console.log("clicked: ", number)
+		console.log("type: ", typeof (number))
+		if (!activeGame || !selectedCell) {
+			if (!activeGame)
+				console.log("game not active")
+			if (!selectedCell)
+				console.log("no selected cell")
+			return
+		}
+		console.log("setting selected cell to clicked number")
+		BOARD.updateCell(selectedCell["x"], selectedCell["y"], number)
+	}
+
+	return (
+		<div id="right-side-elements">
+			<div id="button-numbers-container">
+				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>1</button>
+				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>2</button>
+				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>3</button>
+				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>4</button>
+				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>5</button>
+				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>6</button>
+				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>7</button>
+				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>8</button>
+				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>9</button>
+			</div>
+			{/* <div id="timer"></div> */}
+		</div>
+	)
+}
+
+export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCurrentLevel }) => {
 	useEffect(() => {
 		const bodyContent = document.getElementById("body-content")
 		const gameButtons = document.getElementById('game-buttons');

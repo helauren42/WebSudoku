@@ -13,7 +13,7 @@ body {
 }
 
 #body-content {
-	position: absolute;
+	position: relative;
 	height: 75%;
 	width: 100%;
 	display: flex;
@@ -34,7 +34,6 @@ body {
 
 .playButtons {
 	font-weight: 500;
-	/* Medium weight for better contrast, Roboto supports 500 */
 	width: calc(7.5 * 1rem);
 	border-radius: 2rem;
 	border-style: solid;
@@ -86,7 +85,6 @@ body {
 	background-color: #bfd2cc;
 	flex-basis: calc(33.333333% - 0.2rem);
 	font-weight: 400;
-	/* Normal weight, explicit for clarity */
 }
 
 #timer {

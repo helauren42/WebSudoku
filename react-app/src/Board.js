@@ -2,6 +2,16 @@ import { useRef, useEffect } from 'react';
 import { SOCKET_ADDRESS } from './Const';
 // game -> puzzle -> cells
 //		-> level
+/**
+ * @typedef {Object} Cell
+ * @property {number|null} value - The cell's value (e.g., 1-9 for Sudoku).
+ * @property {number[]} notes - Array of possible values (notes).
+ * @property {boolean|null} mod - Whether the cell is modifiable.
+ */
+
+/**
+ * @class
+ */
 class Cell {
 	constructor() {
 		this.value = null
@@ -19,6 +29,15 @@ class Cell {
 	}
 }
 
+/**
+ * @typedef {Object} Game
+ * @property {string} level - The game difficulty level.
+ * @property {Cell[][]} puzzle - 2D array of Cell objects (e.g., 9x9 grid).
+ */
+
+/**
+ * @class
+ */
 class Game {
 	constructor(level, puzzle) {
 		this.level = level
@@ -28,15 +47,15 @@ class Game {
 
 class AbstractBoard {
 	constructor() {
-		this.makeCanvas()
 		this.game = null
 		this.staticPuzzle = this.getStaticPuzzle()
 		this.row = null
 		this.column = null
 		this.msc = 10
+		this.makeCanvas()
 	}
 	makeCanvas() {
-		let startY;
+		console.log("makeCanvas")
 		let length;
 
 		let canvas = document.getElementById('my-canvas')
@@ -50,10 +69,12 @@ class AbstractBoard {
 		else {
 			length = parentHeight * 0.85
 		}
-		canvas.width = length * 1.1
-		canvas.height = length * 1.05
-		canvas.style.position = 'relative'
-		canvas.style.top = `${startY}px`
+		console.log(this.msc)
+		canvas.style.position = 'absolute'
+		// canvas.width = length + this.msc * 3
+		// canvas.height = length + this.msc * 3
+		canvas.style.margin = "auto auto"
+		// canvas.style.top = `${this.msc}px`
 
 		this.length = length
 		this.noteCellLength = this.cellLength / 3
@@ -150,9 +171,6 @@ class AbstractBoard {
 		this.ctx.stroke()
 	}
 	drawInsideCell(x, y, cellX, cellY, puzzle) {
-		console.log(puzzle)
-		console.log(x)
-		console.log(y)
 		const character = puzzle[y][x].value
 		if (character === 0) {
 			if (puzzle[y][x].notes.length > 0)
@@ -168,18 +186,36 @@ class AbstractBoard {
 		this.ctx.fillText(character, startX, startY)
 
 	}
+	drawRegions() {
+		this.ctx.lineWidth = 3
+		this.ctx.strokeStyle = '#455c52'
+		this.ctx.beginPath()
+		const regionLength = this.length / 3
+		for (let y = 0; y <= 3; y++) {
+			this.ctx.moveTo(this.msc, this.msc + y * regionLength)
+			this.ctx.lineTo(this.msc + this.length, this.msc + y * regionLength)
+			this.ctx.stroke()
+		}
+		for (let x = 0; x <= 3; x++) {
+			this.ctx.moveTo(this.msc + x * regionLength, this.msc)
+			this.ctx.lineTo(this.msc + x * regionLength, this.msc + this.length)
+			this.ctx.stroke()
+		}
+	}
 	/**
 	 * @param {Cell[][]} puzzle - 2D array of Cell objects
 	 */
 	drawPuzzle(puzzle) {
+		// background
 		this.ctx.fillStyle = '#bfd2cc'
 		this.ctx.fillRect(10, 10, this.length, this.length)
 
-		this.ctx.lineWidth = 3
-		this.ctx.strokeStyle = '#343d39'
-		this.ctx.stroke()
+		this.drawRegions()
 
-		this.ctx.fillStyle = '#455c52'
+		this.ctx.lineWidth = 1
+		this.ctx.strokeStyle = '#343d39'
+
+		this.ctx.fillStyle = '#343d39'
 		for (let y = 0; y < 9; y++) {
 			for (let x = 0; x < 9; x++) {
 				const cellX = x * this.cellLength + this.msc
@@ -202,7 +238,24 @@ class AbstractBoard {
 	}
 }
 
+/**
+ * @typedef {Object} AbstractBoard
+ * @property {function(): void} makeCanvas - Creates the canvas.
+ * @property {Game|null} game - The current game instance.
+ * @property {Cell[][]} staticPuzzle - Static puzzle grid.
+ * @property {number|null} row - Selected row index.
+ * @property {number|null} column - Selected column index.
+ * @property {number} msc - Some constant (e.g., 10).
+ */
+
+/**
+ * @class
+ */
 export class Board extends AbstractBoard {
+	constructor() {
+		super()
+		console.log("Board constructor")
+	}
 	drawStaticPuzzle() {
 		this.drawPuzzle(this.staticPuzzle)
 	}
@@ -215,29 +268,31 @@ export class Board extends AbstractBoard {
 		}
 		this.drawPuzzle(this.game.puzzle)
 	}
+	updateCell(x, y, value) {
+		this.game.puzzle[x][y].value = value;
+	}
 	updateSelection(canvasX, canvasY) {
 		canvasX -= this.msc
 		canvasY -= this.msc
 		console.log("updateSelection called")
-		console.log("canvasX: ", canvasX)
-		console.log("canvasY: ", canvasY)
 		const posX = canvasX / this.cellLength
 		const posY = canvasY / this.cellLength
 		console.log("posX: ", posX)
 		console.log("posY: ", posY)
 		const newcolumn = Math.ceil(posX)
 		const newrow = Math.ceil(posY)
-		if (this.column && this.row &&
-			(this.column < 1 || this.row < 1 || this.column > 9 || this.row > 9)
-			|| (this.column == newcolumn && this.row == newrow)) {
+
+		if ((newcolumn < 1 || newrow < 1 || newcolumn > 9 || newrow > 9)
+			|| (this.column && this.row && this.column == newcolumn && this.row == newrow)) {
 			this.column = null;
 			this.newrow = null;
 			console.log("unselected cell")
-			return
+			return null
 		}
 		this.column = newcolumn
 		this.row = newrow
 		console.log(`selected cell(col: ${this.column}, row: ${this.row})`)
+		return { "x": this.column, "y": this.row }
 	}
 	draw(activeGame, currentLevel) {
 		if (!activeGame) {
