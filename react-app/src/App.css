@@ -7,14 +7,28 @@
 	user-select: none;
 }
 
+html {
+	position: relative;
+	height: 100%;
+	width: 100%;
+}
+
 body {
+	position: relative;
+	height: 100%;
+	width: 100%;
 	background-color: #677f7c;
 	font-family: 'Roboto', sans-serif;
 }
 
+#root {
+	height: 100%;
+	width: 100%;
+}
+
 #body-content {
 	position: relative;
-	height: 75%;
+	height: 100%;
 	width: 100%;
 	display: flex;
 	justify-content: space-evenly;
@@ -23,6 +37,21 @@ body {
 
 #body-content>* {
 	flex-basis: 33%;
+	position: relative;
+	margin: auto auto;
+}
+
+#my-canvas-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+#my-canvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 #game-buttons {
@@ -58,6 +87,7 @@ body {
 	position: relative;
 	z-index: 999;
 }
+
 
 #right-side-elements {
 	margin: 0 auto;

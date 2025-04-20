@@ -59,9 +59,9 @@ class AbstractBoard {
 		let length;
 
 		let canvas = document.getElementById('my-canvas')
-		let body_content = document.getElementById('body-content')
-		let parentHeight = body_content.getBoundingClientRect().height
-		let parentWidth = body_content.getBoundingClientRect().width
+		let container = document.getElementById('my-canvas-container')
+		let parentHeight = container.getBoundingClientRect().height
+		let parentWidth = container.getBoundingClientRect().width
 
 		if (parentHeight >= parentWidth) {
 			length = parentWidth * 0.8
@@ -70,11 +70,8 @@ class AbstractBoard {
 			length = parentHeight * 0.85
 		}
 		console.log(this.msc)
-		canvas.style.position = 'absolute'
-		// canvas.width = length + this.msc * 3
-		// canvas.height = length + this.msc * 3
-		canvas.style.margin = "auto auto"
-		// canvas.style.top = `${this.msc}px`
+		canvas.width = length + this.msc * 3
+		canvas.height = length + this.msc * 3
 
 		this.length = length
 		this.noteCellLength = this.cellLength / 3
