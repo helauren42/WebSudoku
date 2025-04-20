@@ -117,6 +117,17 @@ body {
 	font-weight: 400;
 }
 
+.button-numbers:hover {
+	background-color: #a6c1b9;
+	cursor: pointer;
+	transform: scale(1.05);
+}
+
+.button-numbers:active {
+	background-color: #8ca89f;
+	transform: scale(0.95);
+}
+
 #timer {
 	display: flex;
 	justify-content: space-around;
