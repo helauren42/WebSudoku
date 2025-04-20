@@ -16,9 +16,15 @@ class Cell {
 	constructor() {
 		this.value = null
 		this.notes = []
-		this.mod = null; // false or true
+		this.mod = null;
+	}
+	init(_value) {
+		this.value = _value
+		this.mod = _value != 0 ? "const" : "var"
 	}
 	fill(_value) {
+		if (this.mod == "const")
+			throw "This cell value can not be modified"
 		this.value = _value
 	}
 	addNotes(number) {
@@ -91,10 +97,10 @@ class AbstractBoard {
 		}
 		return ret;
 	}
-	fillPuzzle(sudokuGrid, puzzle) {
+	initPuzzle(sudokuGrid, puzzle) {
 		for (let y = 0; y < 9; y++) {
 			for (let x = 0; x < 9; x++) {
-				puzzle[y][x].fill(sudokuGrid[y][x])
+				puzzle[y][x].init(sudokuGrid[y][x])
 			}
 		}
 	}
@@ -111,7 +117,7 @@ class AbstractBoard {
 			[3, 4, 5, 2, 8, 6, 1, 7, 9]
 		];
 		let puzzle = this.makePuzzleStructure()
-		this.fillPuzzle(sudokuGrid, puzzle)
+		this.initPuzzle(sudokuGrid, puzzle)
 		return puzzle
 	}
 	makeSudokuGrid(array) {
@@ -129,7 +135,7 @@ class AbstractBoard {
 	makeDynamicPuzzle(array) {
 		let puzzle = this.makePuzzleStructure()
 		const sudokuGrid = this.makeSudokuGrid(array)
-		this.fillPuzzle(sudokuGrid, puzzle)
+		this.initPuzzle(sudokuGrid, puzzle)
 		return puzzle
 	}
 	clearBoard() {
@@ -174,6 +180,7 @@ class AbstractBoard {
 				this.drawNotes(cellX, cellY)
 			return
 		}
+		this.ctx.fillStyle = puzzle[y][x].mod == "const" ? '#343d39' : "#4b6a66"
 		const midx = cellX + (this.cellLength / 2)
 		const midy = cellY + (this.cellLength / 2)
 		this.ctx.font = `${this.cellLength * 0.8}px Roboto Slab`;
@@ -210,9 +217,8 @@ class AbstractBoard {
 		this.drawRegions()
 
 		this.ctx.lineWidth = 1
-		this.ctx.strokeStyle = '#343d39'
+		// this.ctx.strokeStyle = '#343d39'
 
-		this.ctx.fillStyle = '#343d39'
 		for (let y = 0; y < 9; y++) {
 			for (let x = 0; x < 9; x++) {
 				const cellX = x * this.cellLength + this.msc
@@ -265,8 +271,16 @@ export class Board extends AbstractBoard {
 		}
 		this.drawPuzzle(this.game.puzzle)
 	}
-	updateCell(x, y, value) {
-		this.game.puzzle[x][y].value = value;
+	updateCell(y, x, value) {
+		console.log("pre value: ", this.game.puzzle[x][y].value = value)
+		try {
+			this.game.puzzle[x][y].fill(value);
+		}
+		catch (err) {
+			console.log("You tried to modify a cell from the initial puzzle: ", err)
+		}
+		console.log("post value: ", this.game.puzzle[x][y].value = value)
+		this.drawPuzzle(this.game.puzzle)
 	}
 	updateSelection(canvasX, canvasY) {
 		canvasX -= this.msc
@@ -288,8 +302,8 @@ export class Board extends AbstractBoard {
 		}
 		this.column = newcolumn
 		this.row = newrow
-		console.log(`selected cell(col: ${this.column}, row: ${this.row})`)
-		return { "x": this.column, "y": this.row }
+		console.log(`selected row: ${this.row}), cell(col: ${this.column}`)
+		return { "x": this.column - 1, "y": this.row - 1 }
 	}
 	draw(activeGame, currentLevel) {
 		if (!activeGame) {

@@ -1,3 +1,9 @@
+html {
+	position: relative;
+	height: 100%;
+	width: 100%;
+}
+
 #navbar {
 	position: relative;
 	width: 100%;
@@ -6,7 +12,6 @@
 	border-style: solid;
 	border-color: #343d39;
 	box-shadow: 0 2px 4px rgba(60, 82, 82, 0.5);
-	padding: 1rem;
 }
 
 #navbar-elements {
