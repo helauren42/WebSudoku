@@ -23,9 +23,12 @@ class Cell {
 		this.mod = _value != 0 ? "const" : "var"
 	}
 	fill(_value) {
-		if (this.mod == "const")
+		if (this.mod == "const") {
 			throw "This cell value can not be modified"
-		this.value = _value
+		}
+		else {
+			this.value = _value
+		}
 	}
 	addNotes(number) {
 		this.notes.push(number)
@@ -272,14 +275,14 @@ export class Board extends AbstractBoard {
 		this.drawPuzzle(this.game.puzzle)
 	}
 	updateCell(y, x, value) {
-		console.log("pre value: ", this.game.puzzle[x][y].value = value)
+		console.log("pre value: ", this.game.puzzle[x][y].value)
 		try {
 			this.game.puzzle[x][y].fill(value);
 		}
 		catch (err) {
 			console.log("You tried to modify a cell from the initial puzzle: ", err)
 		}
-		console.log("post value: ", this.game.puzzle[x][y].value = value)
+		console.log("post value: ", this.game.puzzle[x][y].value)
 		this.drawPuzzle(this.game.puzzle)
 	}
 	updateSelection(canvasX, canvasY) {
