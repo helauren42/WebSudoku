@@ -26,6 +26,27 @@ const PAGE_ACCOUNT = "ACCOUNT"
 // 	} = gameState;
 // }
 
+const GamePage = ({ gameState }) => {
+	const {
+		activeGame, setActiveGame,
+		currentLevel, setCurrentLevel,
+		canvasClickedX, setCanvasClickedX,
+		canvasClickedY, setCanvasClickedY,
+		triggerClick, setTriggerClick,
+		selectedCell, setSelectedCell
+	} = gameState;
+	return (
+		<>
+			<LeftSideButtons activeGame={activeGame} setActiveGame={setActiveGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
+			<div id="my-canvas-container">
+				<canvas id="my-canvas" onClick={(e) => { setClickPos(e.clientX, e.clientY, activeGame, triggerClick, setCanvasClickedX, setCanvasClickedY, setTriggerClick) }} ></canvas>
+			</div>
+			<HandleBoard activeGame={activeGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} canvasClickedX={canvasClickedX} canvasClickedY={canvasClickedY} triggerClick={triggerClick} setCanvasClickedX={setCanvasClickedX} setCanvasClickedY={setCanvasClickedY} selectedCell={selectedCell} setSelectedCell={setSelectedCell} />
+			<RightSideButtons activeGame={activeGame} selectedCell={selectedCell} BOARD={BOARD} />
+		</>
+	)
+}
+
 const Router = () => {
 	const [activeGame, setActiveGame] = useState(false)
 	const [currentLevel, setCurrentLevel] = useState(0)
@@ -49,12 +70,7 @@ const Router = () => {
 	};
 	return (
 		<div id="body-content">
-			<LeftSideButtons activeGame={activeGame} setActiveGame={setActiveGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
-			<div id="my-canvas-container">
-				<canvas id="my-canvas" onClick={(e) => { setClickPos(e.clientX, e.clientY, activeGame, triggerClick, setCanvasClickedX, setCanvasClickedY, setTriggerClick) }} ></canvas>
-			</div>
-			<HandleBoard activeGame={activeGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} canvasClickedX={canvasClickedX} canvasClickedY={canvasClickedY} triggerClick={triggerClick} setCanvasClickedX={setCanvasClickedX} setCanvasClickedY={setCanvasClickedY} selectedCell={selectedCell} setSelectedCell={setSelectedCell} />
-			<RightSideButtons activeGame={activeGame} selectedCell={selectedCell} BOARD={BOARD} />
+			<GamePage gameState={gameState} />
 		</div>
 	)
 }
