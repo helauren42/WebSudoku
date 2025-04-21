@@ -7,10 +7,26 @@
 	user-select: none;
 }
 
+*:focus {
+	outline: none;
+	box-shadow: none;
+}
+
 html {
 	position: relative;
 	height: 100%;
 	width: 100%;
+}
+
+button:hover {
+	filter: brightness(85%);
+	cursor: pointer;
+	transform: scale(1.05);
+}
+
+button:active {
+	transform: scale(0.95);
+	filter: brightness(70%);
 }
 
 body {
@@ -24,11 +40,13 @@ body {
 #root {
 	height: 100%;
 	width: 100%;
+	display: flex;
+	flex-direction: column;
 }
 
 #body-content {
 	position: relative;
-	height: 100%;
+	height: 80%;
 	width: 100%;
 	display: flex;
 	justify-content: space-evenly;
@@ -54,11 +72,12 @@ body {
 	transform: translate(-50%, -50%);
 }
 
-#game-buttons {
+#game-mode-buttons {
 	display: flex;
 	justify-content: space-around;
 	gap: 0.8rem;
 	flex-direction: column;
+	align-items: center;
 }
 
 .playButtons {
@@ -72,15 +91,13 @@ body {
 	background-color: #bfd2cc;
 	font-size: 1rem;
 	padding: 0.6rem;
-	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 #start-restart {
 	position: relative;
-}
-
-#start-restart:hover {
-	cursor: pointer;
 }
 
 #select-difficulty {
@@ -88,12 +105,20 @@ body {
 	z-index: 999;
 }
 
-
 #right-side-elements {
 	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	gap: 5rem;
+}
+
+#insert-mode {
+	width: 25%;
+	position: relative;
+	left: 12.5%;
+	text-align: center;
+	background-color: #bfd2cc;
 }
 
 #button-numbers-container {
@@ -115,17 +140,6 @@ body {
 	background-color: #bfd2cc;
 	flex-basis: calc(33.333333% - 0.2rem);
 	font-weight: 400;
-}
-
-.button-numbers:hover {
-	background-color: #a6c1b9;
-	cursor: pointer;
-	transform: scale(1.05);
-}
-
-.button-numbers:active {
-	background-color: #8ca89f;
-	transform: scale(0.95);
 }
 
 #timer {

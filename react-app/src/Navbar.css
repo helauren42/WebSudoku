@@ -7,6 +7,7 @@ html {
 #navbar {
 	position: relative;
 	width: 100%;
+	height: 12%;
 	background-color: #9ab7b4;
 	border-bottom: 0.01rem;
 	border-style: solid;
@@ -84,14 +85,12 @@ html {
 	flex-direction: column;
 	align-items: flex-end;
 	font-size: 1rem;
-	user-select: none;
 }
 
 #user-section:hover {
 	transform: scale(1.1);
 	transform-origin: right;
 	cursor: pointer;
-	user-select: none;
 }
 
 #user-section:active {
