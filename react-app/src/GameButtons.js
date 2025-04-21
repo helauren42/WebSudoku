@@ -1,6 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+const MODE_INSERT = "insert"
+const MODE_NOTE = "note"
 
 export const RightSideButtons = ({ activeGame, selectedCell, BOARD }) => {
+	const [insertMode, setInsertMode] = useState(MODE_INSERT)
 	const buttonNumberClick = (stringNum) => {
 		const number = parseInt(stringNum)
 		console.log("clicked: ", number)
@@ -12,41 +16,41 @@ export const RightSideButtons = ({ activeGame, selectedCell, BOARD }) => {
 				console.log("no selected cell")
 			return
 		}
-		console.log("setting selected cell to clicked number")
-		BOARD.updateCell(selectedCell["x"], selectedCell["y"], number)
+		if (insertMode == MODE_INSERT) {
+			console.log("setting selected cell to clicked number")
+			BOARD.updateCellValue(selectedCell["x"], selectedCell["y"], number)
+		}
+		else {
+			console.log("adding note to selected cell")
+			BOARD.updateCellNote(selectedCell["x"], selectedCell["y"], number)
+		}
 	}
 
 	return (
 		<div id="right-side-elements">
-			<div id="button-numbers-container">
-				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>1</button>
-				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>2</button>
-				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>3</button>
-				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>4</button>
-				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>5</button>
-				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>6</button>
-				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>7</button>
-				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>8</button>
-				<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>9</button>
+			<div id="game-interactions">
+				<button className="playButtons" id="insert-mode" onClick={() => {
+					insertMode == MODE_INSERT ? setInsertMode(MODE_NOTE) : setInsertMode(MODE_INSERT)
+				}
+				} >{insertMode}</button>
+				<div id="button-numbers-container">
+					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>1</button>
+					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>2</button>
+					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>3</button>
+					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>4</button>
+					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>5</button>
+					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>6</button>
+					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>7</button>
+					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>8</button>
+					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>9</button>
+				</div>
+				{/* <div id="timer"></div> */}
 			</div>
-			{/* <div id="timer"></div> */}
 		</div>
 	)
 }
 
 export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCurrentLevel }) => {
-	useEffect(() => {
-		const bodyContent = document.getElementById("body-content")
-		const gameButtons = document.getElementById('game-buttons');
-
-		if (window.innerHeight > window.innerWidth) {
-			bodyContent.style.flexDirection = 'column'
-			gameButtons.style.flexDirection = 'row'
-		} else {
-			bodyContent.style.flexDirection = 'row'
-			gameButtons.style.flexDirection = 'column'
-		}
-	}, [activeGame])
 
 	function updateLevel(e) {
 		console.log("updating level: ", e.target.value)
@@ -69,7 +73,13 @@ export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCu
 	}
 
 	return (
-		<div id="game-buttons">
+		<div id="game-mode-buttons">
+			<select id="select-difficulty" className="playButtons" onChange={(e) => updateLevel(e)}>
+				<option value="Easy">Easy</option>
+				<option value="Medium">Medium</option>
+				<option value="Hard">Hard</option>
+				<option value="Extreme">Extreme</option>
+			</select>
 			{
 				!activeGame && (
 					<button id="start" className="playButtons" onClick={() => setActiveGame(true)} > Start </button>
@@ -80,12 +90,6 @@ export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCu
 					<button className="playButtons" onClick={() => setActiveGame(false)} > Give Up </button>
 				)
 			}
-			<select id="select-difficulty" className="playButtons" onChange={(e) => updateLevel(e)}>
-				<option value="Easy">Easy</option>
-				<option value="Medium">Medium</option>
-				<option value="Hard">Hard</option>
-				<option value="Extreme">Extreme</option>
-			</select>
 		</div >
 	)
 }

@@ -26,14 +26,27 @@ export const setClickPos = (clientX, clientY, activeGame, triggerClick, setCanva
  * @param {number} clickedY
  * @param {Board|null} BOARD
 */
-export const HandleBoard = ({ activeGame, currentLevel, triggerClick, canvasClickedX, canvasClickedY, setSelectedCell }) => {
+export const HandleBoard = ({ activeGame, currentLevel, triggerClick, canvasClickedX, canvasClickedY, selectedCell, setSelectedCell }) => {
 	console.log("handleBoard called")
 
 	useEffect(() => {
 		if (!BOARD)
 			BOARD = new Board()
-		if (activeGame)
-			setSelectedCell(BOARD.updateSelection(canvasClickedX, canvasClickedY))
+		if (activeGame) {
+			const res = BOARD.updateSelection(canvasClickedX, canvasClickedY)
+			setSelectedCell(res)
+			console.log("selected cell: ", res)
+			if (BOARD.noEmptyCell()) {
+				// result = BOARD.countErrors()
+				// if (result > 0) {
+				// 	displayErrorMessage()
+				// }
+				// else {
+				// 	handleSuccess()
+				// }
+			}
+
+		}
 	}, [canvasClickedX, canvasClickedY, triggerClick])
 	useEffect(() => {
 		if (!BOARD)
