@@ -37,15 +37,14 @@ export const HandleBoard = ({ activeGame, currentLevel, triggerClick, canvasClic
 			setSelectedCell(res)
 			console.log("selected cell: ", res)
 			if (BOARD.noEmptyCell()) {
-				// result = BOARD.countErrors()
-				// if (result > 0) {
-				// 	displayErrorMessage()
-				// }
-				// else {
-				// 	handleSuccess()
-				// }
+				const conflictCount = BOARD.countConflicts()
+				if (conflictCount > 0) {
+					// displayErrorMessage()
+				}
+				else {
+					// handleSuccess()
+				}
 			}
-
 		}
 	}, [canvasClickedX, canvasClickedY, triggerClick])
 	useEffect(() => {

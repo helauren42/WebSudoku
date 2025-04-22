@@ -28,7 +28,10 @@ class Cell {
 			throw "This cell value can not be modified"
 		}
 		else {
-			this.value = _value
+			if (this.value == _value)
+				this.value = 0
+			else
+				this.value = _value
 		}
 	}
 	addNotes(number) {
@@ -352,6 +355,54 @@ export class Board extends AbstractBoard {
 			console.log("drawing dynamic puzzle level ", currentLevel)
 			this.fetchAndDrawDynamicPuzzle(currentLevel)
 		}
+	}
+	countConflicts() {
+		const puzzle = this.game.puzzle;
+		let conflictCount = 0;
+
+		for (let y = 0; y < 9; y++) {
+			const seen = new Set();
+			for (let x = 0; x < 9; x++) {
+				const val = puzzle[y][x].value;
+				if (val) {
+					if (seen.has(val))
+						conflictCount++;
+					else
+						seen.add(val);
+				}
+			}
+		}
+		for (let x = 0; x < 9; x++) {
+			const seen = new Set();
+			for (let y = 0; y < 9; y++) {
+				const val = puzzle[y][x].value;
+				if (val) {
+					if (seen.has(val))
+						conflictCount++;
+					else
+						seen.add(val);
+				}
+			}
+		}
+		for (let by = 0; by < 3; by++) {
+			for (let bx = 0; bx < 3; bx++) {
+				const seen = new Set();
+				for (let dy = 0; dy < 3; dy++) {
+					for (let dx = 0; dx < 3; dx++) {
+						const y = by * 3 + dy;
+						const x = bx * 3 + dx;
+						const val = puzzle[y][x].value;
+						if (val) {
+							if (seen.has(val))
+								conflictCount++;
+							else
+								seen.add(val);
+						}
+					}
+				}
+			}
+		}
+		return conflictCount;
 	}
 	noEmptyCell() {
 		const puzzle = this.game.puzzle

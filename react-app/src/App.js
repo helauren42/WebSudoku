@@ -4,27 +4,7 @@ import { Board } from './Board.js';
 import { HandleBoard, BOARD, setClickPos } from './HandleBoard';
 import { LeftSideButtons, RightSideButtons } from './GameButtons.js'
 import './App.css'
-
-const PAGE_GAME = "GAME"
-const PAGE_HOME = "HOME"
-const PAGE_ACCOUNT = "ACCOUNT"
-
-// const PGame = ({ gameState }) => {
-// 	const {
-// 		activeGame,
-// 		setActiveGame,
-// 		currentLevel,
-// 		setCurrentLevel,
-// 		canvasClickedX,
-// 		setCanvasClickedX,
-// 		canvasClickedY,
-// 		setCanvasClickedY,
-// 		triggerClick,
-// 		setTriggerClick,
-// 		selectedCell,
-// 		setSelectedCell,
-// 	} = gameState;
-// }
+import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME, PAGE_GAME_FINISHED } from './Const';
 
 const GamePage = ({ gameState }) => {
 	const {
@@ -33,7 +13,8 @@ const GamePage = ({ gameState }) => {
 		canvasClickedX, setCanvasClickedX,
 		canvasClickedY, setCanvasClickedY,
 		triggerClick, setTriggerClick,
-		selectedCell, setSelectedCell
+		selectedCell, setSelectedCell,
+		currentPage, setCurrentPage
 	} = gameState;
 	return (
 		<>
@@ -47,13 +28,37 @@ const GamePage = ({ gameState }) => {
 	)
 }
 
-const Router = () => {
+const Router = ({ gameState }) => {
+	const {
+		activeGame, setActiveGame,
+		currentLevel, setCurrentLevel,
+		canvasClickedX, setCanvasClickedX,
+		canvasClickedY, setCanvasClickedY,
+		triggerClick, setTriggerClick,
+		selectedCell, setSelectedCell,
+		currentPage, setCurrentPage
+	} = gameState;
+	console.log('Current Page:', gameState.currentPage);
+	console.log('Game State2:', gameState);
+	return (
+		<div id="body-content">
+			{
+				gameState.currentPage == PAGE_GAME &&
+				<GamePage gameState={gameState} />
+			}
+		</div>
+	)
+}
+
+const App = () => {
+
 	const [activeGame, setActiveGame] = useState(false)
 	const [currentLevel, setCurrentLevel] = useState(0)
 	const [canvasClickedX, setCanvasClickedX] = useState(0)
 	const [canvasClickedY, setCanvasClickedY] = useState(0)
 	const [triggerClick, setTriggerClick] = useState(0)
 	const [selectedCell, setSelectedCell] = useState(null)
+	const [currentPage, setCurrentPage] = useState(PAGE_GAME)
 	const gameState = {
 		activeGame,
 		setActiveGame,
@@ -67,20 +72,15 @@ const Router = () => {
 		setTriggerClick,
 		selectedCell,
 		setSelectedCell,
+		currentPage,
+		setCurrentPage
 	};
-	return (
-		<div id="body-content">
-			<GamePage gameState={gameState} />
-		</div>
-	)
-}
-
-const App = () => {
-
+	console.log('Current Page1:', currentPage);
+	console.log('Game State1:', gameState);
 	return (
 		<>
-			<Navbar />
-			<Router />
+			<Navbar setCurrentPage={setCurrentPage} />
+			<Router gameState={gameState} />
 		</>
 	)
 }

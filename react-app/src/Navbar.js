@@ -1,6 +1,7 @@
 import './Navbar.css'
 import UserIcon from './imgs/user.svg'
 import { PROJECT_SRC } from './Const.js'
+import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME } from './Const';
 import { useState, useEffect } from 'react';
 
 const userIcon = `${PROJECT_SRC}imgs/user.svg`
@@ -16,11 +17,11 @@ function setUserSectionWidth() {
 	user_section.style.width = `${width}px`;
 }
 
-export const Navbar = () => {
+export const Navbar = ({ setCurrentPage }) => {
 	const [loggedin, setLoggedin] = useState(false)
 
 	useEffect(() => {
-		setUserSectionWidth()
+		// setUserSectionWidth()
 		window.addEventListener('resize', setUserSectionWidth)
 		return () => {
 			window.removeEventListener('resize', setUserSectionWidth)
@@ -35,7 +36,7 @@ export const Navbar = () => {
 					<button className='nav-button'>Rankings</button>
 					<button className='nav-button'>Play</button>
 				</div>
-				<div id="user-section">
+				<div id="user-section" onClick={() => setCurrentPage(PAGE_ACCOUNT)}>
 					<img id="user-icon" src={UserIcon}></img>
 					<p id="user-text">{loggedin ? 'account' : 'login'}</p>
 				</div>
@@ -43,5 +44,3 @@ export const Navbar = () => {
 		</div >
 	)
 }
-
-// export { Navbar }
