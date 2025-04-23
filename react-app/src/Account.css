@@ -1,0 +1,70 @@
+#parent {
+	position: relative;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	height: 100%;
+}
+
+#account {
+	position: relative;
+	width: 33%;
+	/* background-color: blue; */
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	/* margin-top: 2%; */
+	margin: auto auto;
+	justify-content: space-around;
+	border-width: 0.2rem;
+	border-style: solid;
+	border-color: black;
+	height: 68%;
+	padding: 1rem;
+}
+
+#account-head {
+	font-size: 2.5rem;
+}
+
+#account-body {
+	height: 80%;
+	/* margin-top: 3rem; */
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+	/* height: 80%; */
+}
+
+#account-form {
+	height: 60%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+}
+
+#account-form-section {
+	display: flex;
+	justify-content: space-around;
+}
+
+#account-input-header {
+	font-size: 0.8rem;
+	font-style: normal;
+	font-weight: lighter;
+}
+
+.account-input {
+	background-color: #bfd2cc;
+}
+
+.switch-login-signup {
+	font-size: 0.8rem;
+	text-decoration: underline;
+}
+
+.submit-button {
+	border-radius: 1rem;
+	background-color: #bfd2cc;
+}

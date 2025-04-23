@@ -7,3 +7,12 @@ export const PAGE_GAME_FINISHED = "GAME_FINISHED"
 export const PAGE_HOME = "HOME"
 export const PAGE_ACCOUNT = "ACCOUNT"
 
+
+export class Sections {
+	login = 0
+	signup = 1
+	profile = 2
+}
+
+export const TITLES = { 0: "Login", 1: "Signup", 2: "Profile" }
+

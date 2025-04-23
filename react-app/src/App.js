@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Navbar, setUserSectionWidth } from './Navbar';
-import { Board } from './Board.js';
+import { Account } from './Account.js';
 import { HandleBoard, BOARD, setClickPos } from './HandleBoard';
 import { LeftSideButtons, RightSideButtons } from './GameButtons.js'
 import './App.css'
+import './GamePage.css'
 import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME, PAGE_GAME_FINISHED } from './Const';
 
 const GamePage = ({ gameState }) => {
@@ -18,18 +19,21 @@ const GamePage = ({ gameState }) => {
 	} = gameState;
 	return (
 		<>
-			<LeftSideButtons activeGame={activeGame} setActiveGame={setActiveGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
-			<div id="my-canvas-container">
-				<canvas id="my-canvas" onClick={(e) => { setClickPos(e.clientX, e.clientY, activeGame, triggerClick, setCanvasClickedX, setCanvasClickedY, setTriggerClick) }} ></canvas>
+			< div id="game-page" >
+				<LeftSideButtons activeGame={activeGame} setActiveGame={setActiveGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
+				<div id="my-canvas-container">
+					<canvas id="my-canvas" onClick={(e) => { setClickPos(e.clientX, e.clientY, activeGame, triggerClick, setCanvasClickedX, setCanvasClickedY, setTriggerClick) }} ></canvas>
+				</div>
+				<HandleBoard activeGame={activeGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} canvasClickedX={canvasClickedX} canvasClickedY={canvasClickedY} triggerClick={triggerClick} setCanvasClickedX={setCanvasClickedX} setCanvasClickedY={setCanvasClickedY} selectedCell={selectedCell} setSelectedCell={setSelectedCell} />
+				<RightSideButtons activeGame={activeGame} selectedCell={selectedCell} BOARD={BOARD} />
 			</div>
-			<HandleBoard activeGame={activeGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} canvasClickedX={canvasClickedX} canvasClickedY={canvasClickedY} triggerClick={triggerClick} setCanvasClickedX={setCanvasClickedX} setCanvasClickedY={setCanvasClickedY} selectedCell={selectedCell} setSelectedCell={setSelectedCell} />
-			<RightSideButtons activeGame={activeGame} selectedCell={selectedCell} BOARD={BOARD} />
 		</>
 	)
 }
 
 const Router = ({ gameState }) => {
 	const {
+		loggedIn, setLoggedIn,
 		activeGame, setActiveGame,
 		currentLevel, setCurrentLevel,
 		canvasClickedX, setCanvasClickedX,
@@ -38,20 +42,22 @@ const Router = ({ gameState }) => {
 		selectedCell, setSelectedCell,
 		currentPage, setCurrentPage
 	} = gameState;
-	console.log('Current Page:', gameState.currentPage);
-	console.log('Game State2:', gameState);
 	return (
-		<div id="body-content">
+		<>
 			{
 				gameState.currentPage == PAGE_GAME &&
 				<GamePage gameState={gameState} />
 			}
-		</div>
+			{
+				gameState.currentPage == PAGE_ACCOUNT &&
+				<Account loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+			}
+		</>
 	)
 }
 
 const App = () => {
-
+	const [loggedIn, setLoggedIn] = useState(false)
 	const [activeGame, setActiveGame] = useState(false)
 	const [currentLevel, setCurrentLevel] = useState(0)
 	const [canvasClickedX, setCanvasClickedX] = useState(0)
@@ -79,7 +85,7 @@ const App = () => {
 	console.log('Game State1:', gameState);
 	return (
 		<>
-			<Navbar setCurrentPage={setCurrentPage} />
+			<Navbar setCurrentPage={setCurrentPage} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
 			<Router gameState={gameState} />
 		</>
 	)

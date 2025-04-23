@@ -6,8 +6,6 @@ import { useState, useEffect } from 'react';
 
 const userIcon = `${PROJECT_SRC}imgs/user.svg`
 
-console.log(userIcon)
-
 function setUserSectionWidth() {
 	let user_section = document.getElementById('user-section')
 	let title = document.getElementById('title')
@@ -17,9 +15,7 @@ function setUserSectionWidth() {
 	user_section.style.width = `${width}px`;
 }
 
-export const Navbar = ({ setCurrentPage }) => {
-	const [loggedin, setLoggedin] = useState(false)
-
+export const Navbar = ({ setCurrentPage, loggedIn, setLoggedIn }) => {
 	useEffect(() => {
 		// setUserSectionWidth()
 		window.addEventListener('resize', setUserSectionWidth)
@@ -38,7 +34,7 @@ export const Navbar = ({ setCurrentPage }) => {
 				</div>
 				<div id="user-section" onClick={() => setCurrentPage(PAGE_ACCOUNT)}>
 					<img id="user-icon" src={UserIcon}></img>
-					<p id="user-text">{loggedin ? 'account' : 'login'}</p>
+					<p id="user-text">{loggedIn ? 'account' : 'login'}</p>
 				</div>
 			</div>
 		</div >

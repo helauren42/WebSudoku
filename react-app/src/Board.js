@@ -421,5 +421,3 @@ export class Board extends AbstractBoard {
 		this.makeCanvas()
 	}
 }
-
-
