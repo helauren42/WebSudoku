@@ -86,6 +86,10 @@ class Database():
 if __name__ == "__main__":
     db = Database()
     if(len(sys.argv) > 1 and sys.argv[1] == "clear"):
+        answer = input("Are you sure you want to delete the database? this action is irreversible (Y/n): ")
+        if answer != "Y" and answer != "y" and answer != "yes":
+           print("Operation was cancelled")
+           sys.exit(0)
         db.clearDatabase()
         sys.exit(0)
 
