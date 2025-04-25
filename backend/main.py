@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi import responses
 import uvicorn
 import random
+from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
 from const import HOST, PORT, PROJECT_DIR
@@ -21,11 +22,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class LoginRequest(BaseModel):
+    username:str
+    password:str
+
+class SingupRequest(BaseModel):
+    email:str
+
 @app.get("/")
 async def home():
     return responses.HTMLResponse('omg')
 
-async def getPath(level: int) -> str:
+@app.post("/login")
+async def login(login: LoginRequest):
+    print(login)
+
+async def getPuzzlePath(level: int) -> str:
     difficulty = ""
     match level:
         case 0:
@@ -44,7 +56,7 @@ async def getPath(level: int) -> str:
 @app.get("/fetchPuzzle/{level}")
 async def fetchPuzzle(level: int):
     print(f"request to fetch puzzle level {level}")
-    path = await getPath(level)
+    path = await getPuzzlePath(level)
     print(f"path: {path}")
     with open(path, "r") as file:
         lines = file.readlines()

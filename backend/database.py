@@ -3,33 +3,53 @@ from mysql.connector.abstracts import MySQLCursorAbstract
 import pymysql
 import sys
 import subprocess
+from typing import Optional
 
 from const import PROJECT_DIR
 
 ENV_PATH = f"{PROJECT_DIR}backend/.env"
+DB_DIR = f"{PROJECT_DIR}backend/Database/"
 
 class Database():
     def __init__(self):
         self.host:str = ""
-        self.username:str = ""
+        self.user:str = ""
         self.password:str = ""
         self.name:str = ""
+        self.cnx = None
+        self.cursor = None 
         self.fetchCredentials()
-        self.cursor:MySQLCursorAbstract
+        self.createDb()
         self.setupConnector()
-        self.buildDatabase()
+    def createBuildFile(self):
+        subprocess.run(["touch build.sql"], shell=True, cwd=DB_DIR)
+        lines = []
+        with open(f"{DB_DIR}create.sql", "r") as readfile:
+            lines = readfile.readlines()
+            for i in range(len(lines)):
+                lines[i] = lines[i].replace("DB_HOST", self.host)
+                lines[i] = lines[i].replace("DB_USER", self.user)
+                lines[i] = lines[i].replace("DB_PASSWORD", self.password)
+                lines[i] = lines[i].replace("DB_NAME", self.name)
+                # lines[i] = lines[i].replace("'users'", "`users`")  # Fix table name quotes
+        with open(f"{DB_DIR}build.sql", "w") as writeFile:
+            for line in lines:
+                writeFile.write(line)
+        print(lines)
+    def createDb(self):
+        print("creating database")
+        self.createBuildFile()
+        print("running subprocess excecuting mysql build")
+        subprocess.run(f"sudo mysql < {DB_DIR}build.sql", shell=True)
+        subprocess.run(["rm build.sql"], shell=True, cwd=DB_DIR)
     def setupConnector(self):
-        print(f"name: {self.name}, host: {self.host}, username: {self.username}, password: {self.password}")
+        print(f"name: {self.name}, host: {self.host}, username: {self.user}, password: {self.password}")
         print(f"'{self.password}'")
-        with mysql.connector.connect(
-            host=self.host,
-            port=3306,
-            user=self.username,
-            password=self.password,
-            auth_plugin='mysql_native_password'
-        ) as db:
-            self.cursor = db.cursor()
-
+        self.cnx = mysql.connector.connect(host=self.host, port=3306, user=self.user, password=self.password, database=self.name, auth_plugin='mysql_native_password')
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute("SHOW DATABASES")
+        print(self.cursor.fetchall())
+        print("set up cursor")
     def fetchCredentials(self):
         with open(ENV_PATH, "r") as file:
             lines = file.readlines()
@@ -41,29 +61,31 @@ class Database():
                     if key == "DB_HOST":
                         self.host = value
                     elif key == "DB_USER":
-                        self.username = value
+                        self.user = value
                     elif key == "DB_PASSWORD":
                         self.password = value
                     elif key == "DB_NAME":
                         self.name = value
-    # def buildDatabase(self):
-    #     CWD = f"{PROJECT_DIR}backend/Database/"
-    #     subprocess.run(["touch createTemp.sql"], shell=True, cwd=CWD)
-    #     with open(f"{CWD}create.sql", "r") as readfile:
-    #         lines = readfile.readlines()
-    #         for line in lines:
-    #             line.replace("DB_HOST", self.host)
-    #             line.replace("DB_USER", self.username)
-    #             line.replace("DB_PASSWORD", self.password)
-    #             line.replace("DB_NAME", self.name)
-    #     subprocess.run(["rm createTemp.sql"], shell=True, cwd=CWD)
-    # def clearDatabase(self):
-    #     self.cursor.execute(f"DROP user {self.username}@{self.host}")
-    #     self.cursor.execute(f"DROP database {self.name}")
+    def clearDatabase(self):
+        print("clearing database")
+        subprocess.run(["touch clear.sql"], shell=True, cwd=DB_DIR)
+        with open(f"{DB_DIR}drop.sql", "r") as readFile:
+            lines = readFile.readlines()
+            for i in range(len(lines)):
+                lines[i] = lines[i].replace("DB_HOST", self.host)
+                lines[i] = lines[i].replace("DB_USER", self.user)
+                lines[i] = lines[i].replace("DB_PASSWORD", self.password)
+                lines[i] = lines[i].replace("DB_NAME", self.name)
+            with open(f"{DB_DIR}clear.sql", "w") as writeFile:
+                for line in lines:
+                    writeFile.write(line)
+        subprocess.run(f"sudo mysql < {DB_DIR}clear.sql", shell=True)
+        subprocess.run(["rm clear.sql"], shell=True, cwd=DB_DIR)
+        print("cleared")
 
 if __name__ == "__main__":
     db = Database()
-    # if(len(sys.argv) > 1 and sys.argv[1] == "clear"):
-       # db.clearDatabase()
-    # db.buildDatabase()
+    if(len(sys.argv) > 1 and sys.argv[1] == "clear"):
+        db.clearDatabase()
+        sys.exit(0)
 
