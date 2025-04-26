@@ -1,23 +1,19 @@
 import mysql.connector
 from mysql.connector.abstracts import MySQLCursorAbstract
-import pymysql
 import sys
 import subprocess
-from typing import Optional
 
 from const import PROJECT_DIR
 
 ENV_PATH = f"{PROJECT_DIR}backend/.env"
 DB_DIR = f"{PROJECT_DIR}backend/Database/"
 
-class Database():
+class BaseDatabase():
     def __init__(self):
         self.host:str = ""
         self.user:str = ""
         self.password:str = ""
         self.name:str = ""
-        self.cnx = None
-        self.cursor = None 
         self.fetchCredentials()
         self.createDb()
         self.setupConnector()
@@ -66,6 +62,8 @@ class Database():
                         self.password = value
                     elif key == "DB_NAME":
                         self.name = value
+
+class Database(BaseDatabase):
     def clearDatabase(self):
         print("clearing database")
         subprocess.run(["touch clear.sql"], shell=True, cwd=DB_DIR)
@@ -82,6 +80,16 @@ class Database():
         subprocess.run(f"sudo mysql < {DB_DIR}clear.sql", shell=True)
         subprocess.run(["rm clear.sql"], shell=True, cwd=DB_DIR)
         print("cleared")
+    def signup(self, user, password, email):
+        pass
+    def validUsername(self, user):
+        self.cursor.execute(f"SELECT user FROM users WHERE users={user}")
+        fetched = self.cursor.fetchone()
+        print("valid password fetched: ", fetched)
+    def validPassword(self, user, password):
+        self.cursor.execute(f"SELECT password FROM users WHERE users={user}")
+        fetched = self.cursor.fetchone()
+        print("valid password fetched: ", fetched)
 
 if __name__ == "__main__":
     db = Database()

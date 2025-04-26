@@ -1,14 +1,17 @@
 import json
+import re
 from fastapi import FastAPI
 from fastapi import responses
 import uvicorn
 import random
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, field_validator
 from fastapi.middleware.cors import CORSMiddleware
 
 from const import HOST, PORT, PROJECT_DIR
+from database import Database
 
 app = FastAPI()
+db = Database()
 
 origins = [
     "http://localhost:3000"
@@ -25,9 +28,28 @@ app.add_middleware(
 class LoginRequest(BaseModel):
     username:str
     password:str
+    @field_validator("password")
+    def validPassword(cls, value:str):
+        pass
+    @field_validator("username")
+    def validUsername(cls, value:str):
+        pass
 
-class SingupRequest(BaseModel):
-    email:str
+class SignupRequest(LoginRequest):
+    email: EmailStr
+    @field_validator("password")
+    def validPassword(cls, value:str):
+        pattern = r'(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W])(?=.{8})'
+        if re.match(pattern, value):
+            print("valid password")
+            return
+        Exception("Invalid Password")
+    @field_validator("username")
+    def validUsername(cls, value:str):
+        pattern = r'(?=.*\W)'
+        if not re.match(pattern, value):
+            Exception("Invalid Password")
+        return
 
 @app.get("/")
 async def home():
@@ -36,6 +58,10 @@ async def home():
 @app.post("/login")
 async def login(login: LoginRequest):
     print(login)
+
+@app.post("/signup")
+async def signup(signup: SignupRequest):
+    print(signup)
 
 async def getPuzzlePath(level: int) -> str:
     difficulty = ""
@@ -63,6 +89,5 @@ async def fetchPuzzle(level: int):
     return responses.JSONResponse(json.dumps(lines), 200)
 
 if __name__ == "__main__":
-    # sudokuCache.makeSudokusConcurrently()
     uvicorn.run(app="main:app", host=HOST, port=PORT, reload=True)
 
