@@ -4,6 +4,7 @@ import sys
 import subprocess
 
 from const import PROJECT_DIR
+from handleRequests import LoginRequest, SignupRequest
 
 ENV_PATH = f"{PROJECT_DIR}backend/.env"
 DB_DIR = f"{PROJECT_DIR}backend/Database/"
@@ -16,7 +17,13 @@ class BaseDatabase():
         self.name:str = ""
         self.fetchCredentials()
         self.createDb()
-        self.setupConnector()
+        self.setupCursor()
+    def setupCursor(self):
+        print(f"name: {self.name}, host: {self.host}, username: {self.user}, password: {self.password}")
+        print(f"'{self.password}'")
+        self.cnx = mysql.connector.connect(host=self.host, port=3306, user=self.user, password=self.password, database=self.name, auth_plugin='mysql_native_password', autocommit=True)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(f"USE {self.name}")
     def createBuildFile(self):
         subprocess.run(["touch build.sql"], shell=True, cwd=DB_DIR)
         lines = []
@@ -38,14 +45,6 @@ class BaseDatabase():
         print("running subprocess excecuting mysql build")
         subprocess.run(f"sudo mysql < {DB_DIR}build.sql", shell=True)
         subprocess.run(["rm build.sql"], shell=True, cwd=DB_DIR)
-    def setupConnector(self):
-        print(f"name: {self.name}, host: {self.host}, username: {self.user}, password: {self.password}")
-        print(f"'{self.password}'")
-        self.cnx = mysql.connector.connect(host=self.host, port=3306, user=self.user, password=self.password, database=self.name, auth_plugin='mysql_native_password')
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute("SHOW DATABASES")
-        print(self.cursor.fetchall())
-        print("set up cursor")
     def fetchCredentials(self):
         with open(ENV_PATH, "r") as file:
             lines = file.readlines()
@@ -62,7 +61,19 @@ class BaseDatabase():
                         self.password = value
                     elif key == "DB_NAME":
                         self.name = value
+    def insertNewUser(self, user, password, email):
+        print("adding user to db")
+        insertQuery = f"INSERT INTO users (username, password, email) VALUES(%s, %s, %s)"
+        values = (user, password, email)
+        self.cursor.execute(insertQuery, values)
 
+    def userNotExists(self, username):
+        self.cursor.execute("SELECT username FROM users WHERE username=%s", (username,))
+        fetched = self.cursor.fetchone()
+        print("userNotExists fetched: ", fetched)
+        if not fetched:
+            return True
+        return False
 class Database(BaseDatabase):
     def clearDatabase(self):
         print("clearing database")
@@ -80,13 +91,17 @@ class Database(BaseDatabase):
         subprocess.run(f"sudo mysql < {DB_DIR}clear.sql", shell=True)
         subprocess.run(["rm clear.sql"], shell=True, cwd=DB_DIR)
         print("cleared")
-    def signup(self, user, password, email):
-        pass
-    def validUsername(self, user):
+    def signup(self, signupObject: SignupRequest):
+        print("db.signup()")
+        if self.userNotExists(signupObject.username):
+            self.insertNewUser(signupObject.username, signupObject.password, signupObject.email)
+        else:
+            Exception("Username already taken")
+    def validLoginUsername(self, user):
         self.cursor.execute(f"SELECT user FROM users WHERE users={user}")
         fetched = self.cursor.fetchone()
         print("valid password fetched: ", fetched)
-    def validPassword(self, user, password):
+    def validLoginPassword(self, user, password):
         self.cursor.execute(f"SELECT password FROM users WHERE users={user}")
         fetched = self.cursor.fetchone()
         print("valid password fetched: ", fetched)

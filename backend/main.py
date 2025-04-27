@@ -1,12 +1,10 @@
 import json
-import re
-from fastapi import FastAPI
-from fastapi import responses
+from fastapi import FastAPI, responses, Request
 import uvicorn
 import random
-from pydantic import BaseModel, EmailStr, field_validator
 from fastapi.middleware.cors import CORSMiddleware
 
+from handleRequests import LoginRequest, SignupRequest
 from const import HOST, PORT, PROJECT_DIR
 from database import Database
 
@@ -25,32 +23,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class LoginRequest(BaseModel):
-    username:str
-    password:str
-    @field_validator("password")
-    def validPassword(cls, value:str):
-        pass
-    @field_validator("username")
-    def validUsername(cls, value:str):
-        pass
-
-class SignupRequest(LoginRequest):
-    email: EmailStr
-    @field_validator("password")
-    def validPassword(cls, value:str):
-        pattern = r'(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W])(?=.{8})'
-        if re.match(pattern, value):
-            print("valid password")
-            return
-        Exception("Invalid Password")
-    @field_validator("username")
-    def validUsername(cls, value:str):
-        pattern = r'(?=.*\W)'
-        if not re.match(pattern, value):
-            Exception("Invalid Password")
-        return
-
 @app.get("/")
 async def home():
     return responses.HTMLResponse('omg')
@@ -60,8 +32,10 @@ async def login(login: LoginRequest):
     print(login)
 
 @app.post("/signup")
-async def signup(signup: SignupRequest):
+async def signup(signup: SignupRequest, request: Request):
     print(signup)
+    print(await request.body())
+    db.signup(signup)
 
 async def getPuzzlePath(level: int) -> str:
     difficulty = ""
