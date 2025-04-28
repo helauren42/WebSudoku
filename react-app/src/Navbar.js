@@ -1,10 +1,10 @@
 import './Navbar.css'
-import UserIcon from './imgs/user.svg'
-import { PROJECT_SRC } from './Const.js'
-import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME } from './Const';
 import { useState, useEffect } from 'react';
 
-const userIcon = `${PROJECT_SRC}imgs/user.svg`
+import { ACCOUNT_PROFILE } from './Account.js';
+import { PROJECT_SRC } from './Const.js'
+import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME } from './Const';
+import UserIcon from './imgs/user.svg'
 
 function setUserSectionWidth() {
 	let user_section = document.getElementById('user-section')

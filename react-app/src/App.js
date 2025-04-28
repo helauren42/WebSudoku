@@ -5,6 +5,7 @@ import { HandleBoard, BOARD, setClickPos } from './HandleBoard';
 import { LeftSideButtons, RightSideButtons } from './GameButtons.js'
 import './App.css'
 import './GamePage.css'
+
 import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME, PAGE_GAME_FINISHED } from './Const';
 
 const GamePage = ({ gameState }) => {
@@ -66,6 +67,8 @@ const App = () => {
 	const [selectedCell, setSelectedCell] = useState(null)
 	const [currentPage, setCurrentPage] = useState(PAGE_GAME)
 	const gameState = {
+		loggedIn,
+		setLoggedIn,
 		activeGame,
 		setActiveGame,
 		currentLevel,
