@@ -1,12 +1,12 @@
 import json
-from fastapi import FastAPI, responses, Request
+from fastapi import FastAPI, responses, Request, status
 import uvicorn
 import random
 from fastapi.middleware.cors import CORSMiddleware
 
 from handleRequests import LoginRequest, SignupRequest
 from const import HOST, PORT, PROJECT_DIR
-from database import Database
+from database import Database, UserData
 
 app = FastAPI()
 db = Database()
@@ -35,7 +35,17 @@ async def login(login: LoginRequest):
 async def signup(signup: SignupRequest, request: Request):
     print(signup)
     print(await request.body())
-    db.signup(signup)
+    try:
+        accountProfile:dict = db.signup(signup)
+        print(accountProfile)
+        print(type(accountProfile))
+        return responses.JSONResponse(content={ "status": "success", "message": "signup succesfull", "accountProfile": accountProfile }, status_code=200)
+    except Exception as e:
+        splitted = e.__str__().split('\n')
+        statusCode = int(splitted[0])
+        message = splitted[1]
+        print("Could not signup: ", message)
+        return responses.JSONResponse(content={"status": "error", "message": message }, status_code=statusCode)
 
 async def getPuzzlePath(level: int) -> str:
     difficulty = ""

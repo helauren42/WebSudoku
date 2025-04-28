@@ -1,3 +1,4 @@
+from datetime import datetime
 import mysql.connector
 from mysql.connector.abstracts import MySQLCursorAbstract
 import sys
@@ -9,6 +10,23 @@ from handleRequests import LoginRequest, SignupRequest
 ENV_PATH = f"{PROJECT_DIR}backend/.env"
 DB_DIR = f"{PROJECT_DIR}backend/Database/"
 
+class UserData():
+    def __init__(self, username:str, email:str, hasPicture:bool=False, picturePath:str="", wins:int=0, created_at:datetime=datetime.now()) -> None:
+        self.username = username
+        self.email = email
+        self.hasPicture = hasPicture
+        self.picturePath = picturePath
+        self.wins = wins
+        self.creationDay = [created_at.year, created_at.month, created_at.day]
+    def to_dict(self):
+        return {
+            'username': self.username,
+            'email': self.email,
+            'hasPicture': self.hasPicture,
+            'picturePath': self.picturePath,
+            'wins': self.wins,
+            'creationDay': self.creationDay
+        }
 class BaseDatabase():
     def __init__(self):
         self.host:str = ""
@@ -34,7 +52,6 @@ class BaseDatabase():
                 lines[i] = lines[i].replace("DB_USER", self.user)
                 lines[i] = lines[i].replace("DB_PASSWORD", self.password)
                 lines[i] = lines[i].replace("DB_NAME", self.name)
-                # lines[i] = lines[i].replace("'users'", "`users`")  # Fix table name quotes
         with open(f"{DB_DIR}build.sql", "w") as writeFile:
             for line in lines:
                 writeFile.write(line)
@@ -74,6 +91,12 @@ class BaseDatabase():
         if not fetched:
             return True
         return False
+    def fetchUserData(self, username):
+        columns = self.cursor.execute("SELECT * FROM users WHERE username=%s", (username,))
+        print("!!! COLUMNS:")
+        print(type(columns))
+        print(columns)
+
 class Database(BaseDatabase):
     def clearDatabase(self):
         print("clearing database")
@@ -95,8 +118,13 @@ class Database(BaseDatabase):
         print("db.signup()")
         if self.userNotExists(signupObject.username):
             self.insertNewUser(signupObject.username, signupObject.password, signupObject.email)
+            userData = UserData(signupObject.username, signupObject.email).to_dict()
+            print("userData: ", userData)
+            print("userData: ", type(userData))
+            return userData
         else:
-            Exception("Username already taken")
+            print("Username already taken")
+            raise Exception("409\nUsername already taken")
     def validLoginUsername(self, user):
         self.cursor.execute(f"SELECT user FROM users WHERE users={user}")
         fetched = self.cursor.fetchone()
