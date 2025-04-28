@@ -14,3 +14,5 @@ venv
 puzzles
 basePuzzles
 
+/node_modules
+/build
