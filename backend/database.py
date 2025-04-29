@@ -12,18 +12,20 @@ ENV_PATH = f"{PROJECT_DIR}backend/.env"
 DB_DIR = f"{PROJECT_DIR}backend/Database/"
 
 class UserData():
-    def __init__(self, username:str, email:str, hasPicture:bool=False, wins:int=0, created_at:datetime=datetime.now()) -> None:
+    def __init__(self, username:str, email:str, hasPicture:bool=False, totalPoints:int=0, weeklyPoints:int=0, created_at:datetime=datetime.now()) -> None:
         self.username = username
         self.email = email
         self.hasPicture = hasPicture
-        self.wins = wins
+        self.totalPoints = totalPoints
+        self.weeklyPoints = weeklyPoints
         self.creationDay = [created_at.year, created_at.month, created_at.day]
     def to_dict(self):
         return {
             'username': self.username,
             'email': self.email,
             'hasPicture': self.hasPicture,
-            'wins': self.wins,
+            'totalPoints': self.totalPoints,
+            'weeklyPoints': self.weeklyPoints,
             'creationDay': self.creationDay
         }
 class BaseDatabase():
@@ -111,7 +113,7 @@ class BaseDatabase():
         print(username)
         print(type(columns))
         print(columns)
-        userData = UserData(username, columns[4], columns[5], columns[6], columns[1])
+        userData = UserData(username, columns[4], columns[5], columns[6], columns[7], columns[1])
         return userData
 
 class Database(BaseDatabase):

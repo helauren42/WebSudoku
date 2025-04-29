@@ -14,7 +14,8 @@ class AccountProfile {
 		this.email = undefined
 		this.hasPicture = false
 		this.picturePath = undefined
-		this.wins = undefined
+		this.totalWins = undefined
+		this.weeklyWins = undefined
 		this.creationDay = undefined
 		this.displayedUsername = undefined
 		this.displayedEmail = undefined

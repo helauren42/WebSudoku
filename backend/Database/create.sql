@@ -10,5 +10,16 @@ CREATE TABLE IF NOT EXISTS users (
 	password VARCHAR(255) NOT NULL,
 	email VARCHAR(255) NOT NULL,
 	picture BOOLEAN DEFAULT FALSE,
-	wins INT DEFAULT 0
+	totalpoints INT DEFAULT 0,
 );
+
+CREATE TABLE IF NOT EXISTS weeklyRanking (
+	username VARCHAR(255) PRIMARY KEY NOT NULL,
+	weeklypoints INT DEFAULT 0
+)
+
+CREATE TABLE IF NOT EXISTS allTimeRanking (
+	username VARCHAR(255) PRIMARY KEY NOT NULL,
+	weeklypoints INT DEFAULT 0
+)
+
