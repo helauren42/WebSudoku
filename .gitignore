@@ -14,5 +14,5 @@ venv
 puzzles
 basePuzzles
 
-/node_modules
-/build
+react-app/node_modules
+react-app/build

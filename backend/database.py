@@ -78,6 +78,7 @@ class BaseDatabase():
                     elif key == "DB_NAME":
                         self.name = value
     def validLoginUsername(self, user):
+        print("checking valid login username: ", user)
         self.cursor.execute(f"SELECT username FROM users WHERE username=%s", (user,))
         fetched = self.cursor.fetchone()
         print("valid username fetched: ", fetched)

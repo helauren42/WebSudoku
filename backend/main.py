@@ -34,7 +34,7 @@ async def login(login: LoginRequest):
     except Exception as e:
         print("error message: ", e.__str__())
         return responses.JSONResponse(content={"status": "error", "message": e.__str__() }, status_code=401)
-    return responses.JSONResponse(content={ "status": "success", "message": "login succesfull", "accountProfile": accountProfile }, status_code=200)
+    return responses.JSONResponse(content={ "status": "success", "message": "success", "accountProfile": accountProfile }, status_code=200)
 
 @app.post("/signup")
 async def signup(signup: SignupRequest, request: Request):

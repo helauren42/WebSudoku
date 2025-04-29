@@ -28,6 +28,7 @@ class AccountProfile {
 		return name;
 	}
 	login(username, email, wins, creationDay, hasPicture = false, picturePath = null) {
+		console.log("account profile login")
 		this.username = username
 		this.email = email
 		this.hasPicture = hasPicture
@@ -100,7 +101,7 @@ const SignupSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
 				<h3 className="account-input-header">Email</h3>
 				<input className="account-input" required type="text" onChange={(e) => updateValue("email", e.target.value)} />
 			</div>
-			<div>
+			<div className="account-statusMessage">
 				<p>{statusMessage}</p>
 			</div>
 			<button className="submit-button" >Submit</button>
@@ -138,6 +139,7 @@ const ProfileSection = (({ currentSection, setCurrentSection, setLoggedIn }) => 
 const LoginSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
 	const [username, setUsername] = useState("")
 	const [password, setPassword] = useState("")
+	const [statusMessage, setStatusMessage] = useState("")
 	const handleInputChange = ((e, type) => {
 		if (type == "username")
 			setUsername(e.target.value)
@@ -148,29 +150,24 @@ const LoginSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
 		console.log("submitting login");
 		e.preventDefault()
 		e.target.reset()
-		await fetch("http://127.0.0.1:5463/login", {
+		const data = await fetch("http://127.0.0.1:5463/login", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ username, password }),
-		})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error("Login failed");
-				}
-				return response.json();
-			})
-			.then((data) => {
-				console.log("Login successful:", data);
-				setLoggedIn()
-				setCurrentSection(SECTIONS.profile)
-				const accountProfileData = data["accountProfile"]
-				ACCOUNT_PROFILE.login(accountProfileData.username, accountProfileData.email, accountProfileData.wins, accountProfileData.creationDay, accountProfileData.hasPicture, accountProfileData.picturePath,)
-			})
-			.catch((error) => {
-				console.error("Error during login:", error);
-			})
-		setUsername("")
-		setPassword("")
+		}).then((response) => response.json())
+		console.log(data)
+		if (data["message"] == "success") {
+			console.log("Login successful:", data);
+			setLoggedIn(true)
+			setCurrentSection(SECTIONS.profile)
+			const accountProfileData = data["accountProfile"]
+			ACCOUNT_PROFILE.login(accountProfileData.username, accountProfileData.email, accountProfileData.wins, accountProfileData.creationDay, accountProfileData.hasPicture, accountProfileData.picturePath,)
+		}
+		else {
+			console.log("Login error:", data);
+			const msg = data["message"]
+			setStatusMessage(msg)
+		}
 	}
 	return (
 		<form className="account-form" onSubmit={(e) => { submitLogin(e) }}>
@@ -181,6 +178,9 @@ const LoginSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
 			<div className="account-form-section">
 				<h3 className="account-input-header">Password</h3>
 				<input className="account-input" required type="text" onChange={(e) => handleInputChange(e, "password")} />
+			</div>
+			<div className="account-statusMessage">
+				<p>{statusMessage}</p>
 			</div>
 			<button className="submit-button" >Submit</button>
 			<p className="switch-login-signup" onClick={() => setCurrentSection(SECTIONS.signup)}>click here to signup</p>
