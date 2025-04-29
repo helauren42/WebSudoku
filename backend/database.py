@@ -1,4 +1,5 @@
 from datetime import datetime
+from logging import log
 import mysql.connector
 from mysql.connector.abstracts import MySQLCursorAbstract
 import sys
@@ -11,11 +12,10 @@ ENV_PATH = f"{PROJECT_DIR}backend/.env"
 DB_DIR = f"{PROJECT_DIR}backend/Database/"
 
 class UserData():
-    def __init__(self, username:str, email:str, hasPicture:bool=False, picturePath:str="", wins:int=0, created_at:datetime=datetime.now()) -> None:
+    def __init__(self, username:str, email:str, hasPicture:bool=False, wins:int=0, created_at:datetime=datetime.now()) -> None:
         self.username = username
         self.email = email
         self.hasPicture = hasPicture
-        self.picturePath = picturePath
         self.wins = wins
         self.creationDay = [created_at.year, created_at.month, created_at.day]
     def to_dict(self):
@@ -23,7 +23,6 @@ class UserData():
             'username': self.username,
             'email': self.email,
             'hasPicture': self.hasPicture,
-            'picturePath': self.picturePath,
             'wins': self.wins,
             'creationDay': self.creationDay
         }
@@ -78,6 +77,20 @@ class BaseDatabase():
                         self.password = value
                     elif key == "DB_NAME":
                         self.name = value
+    def validLoginUsername(self, user):
+        self.cursor.execute(f"SELECT username FROM users WHERE username=%s", (user,))
+        fetched = self.cursor.fetchone()
+        print("valid username fetched: ", fetched)
+        if fetched != None:
+            return True
+        return False
+    def validLoginPassword(self, user, password):
+        self.cursor.execute(f"SELECT password FROM users WHERE username=%s", (user,))
+        fetched = self.cursor.fetchone()
+        found = fetched[0]
+        if found  == password:
+            return True
+        return False
     def insertNewUser(self, user, password, email):
         print("adding user to db")
         insertQuery = f"INSERT INTO users (username, password, email) VALUES(%s, %s, %s)"
@@ -87,15 +100,18 @@ class BaseDatabase():
     def userNotExists(self, username):
         self.cursor.execute("SELECT username FROM users WHERE username=%s", (username,))
         fetched = self.cursor.fetchone()
-        print("userNotExists fetched: ", fetched)
-        if not fetched:
+        if fetched == None:
             return True
         return False
     def fetchUserData(self, username):
-        columns = self.cursor.execute("SELECT * FROM users WHERE username=%s", (username,))
+        self.cursor.execute("SELECT * FROM users WHERE username=%s", (username,))
+        columns = self.cursor.fetchone()
         print("!!! COLUMNS:")
+        print(username)
         print(type(columns))
         print(columns)
+        userData = UserData(username, columns[4], columns[5], columns[6], columns[1])
+        return userData
 
 class Database(BaseDatabase):
     def clearDatabase(self):
@@ -114,6 +130,14 @@ class Database(BaseDatabase):
         subprocess.run(f"sudo mysql < {DB_DIR}clear.sql", shell=True)
         subprocess.run(["rm clear.sql"], shell=True, cwd=DB_DIR)
         print("cleared")
+    def login(self, loginObject: LoginRequest):
+        print("db.login()")
+        if not self.validLoginUsername(loginObject.username):
+            raise Exception("username does not exist")
+        if not self.validLoginPassword(loginObject.username, loginObject.password):
+            raise Exception("wrong password")
+        userData = self.fetchUserData(username=loginObject.username)
+        return userData.to_dict()
     def signup(self, signupObject: SignupRequest):
         print("db.signup()")
         if self.userNotExists(signupObject.username):
@@ -125,14 +149,7 @@ class Database(BaseDatabase):
         else:
             print("Username already taken")
             raise Exception("409\nUsername already taken")
-    def validLoginUsername(self, user):
-        self.cursor.execute(f"SELECT user FROM users WHERE users={user}")
-        fetched = self.cursor.fetchone()
-        print("valid password fetched: ", fetched)
-    def validLoginPassword(self, user, password):
-        self.cursor.execute(f"SELECT password FROM users WHERE users={user}")
-        fetched = self.cursor.fetchone()
-        print("valid password fetched: ", fetched)
+
 
 if __name__ == "__main__":
     db = Database()

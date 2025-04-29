@@ -163,6 +163,8 @@ const LoginSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
 				console.log("Login successful:", data);
 				setLoggedIn()
 				setCurrentSection(SECTIONS.profile)
+				const accountProfileData = data["accountProfile"]
+				ACCOUNT_PROFILE.login(accountProfileData.username, accountProfileData.email, accountProfileData.wins, accountProfileData.creationDay, accountProfileData.hasPicture, accountProfileData.picturePath,)
 			})
 			.catch((error) => {
 				console.error("Error during login:", error);

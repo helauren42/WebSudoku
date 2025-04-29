@@ -1,5 +1,5 @@
 import json
-from fastapi import FastAPI, responses, Request, status
+from fastapi import FastAPI, responses, Request
 import uvicorn
 import random
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,7 +29,12 @@ async def home():
 
 @app.post("/login")
 async def login(login: LoginRequest):
-    print(login)
+    try:
+        accountProfile = db.login(login)
+    except Exception as e:
+        print("error message: ", e.__str__())
+        return responses.JSONResponse(content={"status": "error", "message": e.__str__() }, status_code=401)
+    return responses.JSONResponse(content={ "status": "success", "message": "login succesfull", "accountProfile": accountProfile }, status_code=200)
 
 @app.post("/signup")
 async def signup(signup: SignupRequest, request: Request):
@@ -41,11 +46,14 @@ async def signup(signup: SignupRequest, request: Request):
         print(type(accountProfile))
         return responses.JSONResponse(content={ "status": "success", "message": "signup succesfull", "accountProfile": accountProfile }, status_code=200)
     except Exception as e:
-        splitted = e.__str__().split('\n')
-        statusCode = int(splitted[0])
-        message = splitted[1]
-        print("Could not signup: ", message)
-        return responses.JSONResponse(content={"status": "error", "message": message }, status_code=statusCode)
+        if e.__str__().find("\n"):
+            splitted = e.__str__().split('\n')
+            statusCode = int(splitted[0])
+            message = splitted[1]
+            print("Could not signup: ", message)
+            return responses.JSONResponse(content={"status": "error", "message": message }, status_code=statusCode)
+        else:
+            return responses.JSONResponse(content={"status": "error", "message": e.__str__() }, status_code=400)
 
 async def getPuzzlePath(level: int) -> str:
     difficulty = ""
