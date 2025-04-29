@@ -58,5 +58,5 @@ if __name__ == "__main__":
                 for num in row:
                     file.write(str(num))
                 file.write("\n")
-    count += 1
+        count += 1
 
