@@ -68,7 +68,7 @@ class AbstractBoard {
 		this.makeCanvas()
 	}
 	makeCanvas() {
-		console.log("makeCanvas")
+		console.log("make board canvas")
 		let length;
 
 		let canvas = document.getElementById('my-canvas')

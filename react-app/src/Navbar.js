@@ -27,10 +27,10 @@ export const Navbar = ({ setCurrentPage, loggedIn, setLoggedIn }) => {
 	return (
 		<div id="navbar">
 			<div id="navbar-elements">
-				<h1 id="title">Sudoku</h1>
+				<h1 id="title" onClick={() => setCurrentPage(PAGE_HOME)}>Sudoku</h1>
 				<div id="nav-menu">
 					<button className='nav-button'>Rankings</button>
-					<button className='nav-button'>Play</button>
+					<button className='nav-button' onClick={() => setCurrentPage(PAGE_GAME)} >Play</button>
 				</div>
 				<div id="user-section" onClick={() => setCurrentPage(PAGE_ACCOUNT)}>
 					<img id="user-icon" src={UserIcon}></img>

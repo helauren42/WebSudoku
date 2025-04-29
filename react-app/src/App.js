@@ -53,6 +53,10 @@ const Router = ({ gameState }) => {
 				gameState.currentPage == PAGE_ACCOUNT &&
 				<Account loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
 			}
+			{/* { */}
+			{/* 	gameState.currentPage == PAGE_HOME && */}
+			{/* 	<Account loggedIn={loggedIn} setLoggedIn={setLoggedIn} /> */}
+			{/* } */}
 		</>
 	)
 }

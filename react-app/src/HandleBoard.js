@@ -52,6 +52,8 @@ export const HandleBoard = ({ activeGame, currentLevel, triggerClick, canvasClic
 			BOARD = new Board()
 		if (!activeGame)
 			BOARD.giveUp();
+		else
+			BOARD.makeCanvas()
 	}, [activeGame])
 	useEffect(() => {
 		if (!BOARD)
@@ -62,4 +64,3 @@ export const HandleBoard = ({ activeGame, currentLevel, triggerClick, canvasClic
 		<></>
 	)
 }
-
