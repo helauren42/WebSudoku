@@ -17,7 +17,7 @@ def getPuzzle(level, base_file) -> str:
     gen = Generator(base_file)
 
 # applying 100 random transformations to puzzle
-    gen.randomize(100)
+    # gen.randomize(100)
 
 # applying logical reduction with corresponding difficulty cutoff
     gen.reduce_via_logical(difficulty[0])
