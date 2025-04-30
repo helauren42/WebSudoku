@@ -14,8 +14,7 @@ class AccountProfile {
 		this.email = undefined
 		this.hasPicture = false
 		this.picturePath = undefined
-		this.totalWins = undefined
-		this.weeklyWins = undefined
+		this.totalPoints = 0
 		this.creationDay = undefined
 		this.displayedUsername = undefined
 		this.displayedEmail = undefined
@@ -28,13 +27,13 @@ class AccountProfile {
 			return name.substring(0, max) + "."
 		return name;
 	}
-	login(username, email, wins, creationDay, hasPicture = false, picturePath = null) {
+	login(username, email, totalPoints, creationDay, hasPicture = false, picturePath = null) {
 		console.log("account profile login")
 		this.username = username
 		this.email = email
 		this.hasPicture = hasPicture
 		this.picturePath = picturePath
-		this.wins = wins
+		this.totalPoints = totalPoints
 		this.creationDay = creationDay
 		this.displayedUsername = this.trimDisplay(this.username, 18)
 		this.displayedEmail = this.trimDisplay(this.email, 30)
@@ -85,7 +84,7 @@ const SignupSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
 		if (status == "success") {
 			setCurrentSection(SECTIONS.profile)
 			setLoggedIn(true)
-			ACCOUNT_PROFILE.login(accountProfileData.username, accountProfileData.email, accountProfileData.wins, accountProfileData.creationDay, accountProfileData.hasPicture, accountProfileData.picturePath,)
+			ACCOUNT_PROFILE.login(accountProfileData.username, accountProfileData.email, accountProfileData.totalPoints, accountProfileData.creationDay, accountProfileData.hasPicture, accountProfileData.picturePath,)
 		}
 	})
 	return (
@@ -120,7 +119,7 @@ const ProfileSection = (({ currentSection, setCurrentSection, setLoggedIn }) => 
 		<div id="profile-container">
 			<div className="profile-line">
 				<h2 id="profile-username">{ACCOUNT_PROFILE.displayedUsername}</h2>
-				<h2 id="profile-wins">{ACCOUNT_PROFILE.wins} wins</h2>
+				<h2 id="profile-wins">{ACCOUNT_PROFILE.totalPoints} Points</h2>
 			</div>
 			<div className="profile-line">
 				<h2>Creation: </h2>
