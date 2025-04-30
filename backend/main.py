@@ -37,9 +37,8 @@ async def login(login: LoginRequest):
     return responses.JSONResponse(content={ "status": "success", "message": "success", "accountProfile": accountProfile }, status_code=200)
 
 @app.post("/signup")
-async def signup(signup: SignupRequest, request: Request):
+async def signup(signup: SignupRequest):
     print(signup)
-    print(await request.body())
     try:
         accountProfile:dict = db.signup(signup)
         print(accountProfile)
@@ -52,10 +51,18 @@ async def signup(signup: SignupRequest, request: Request):
             message = splitted[1]
             print("Could not signup: ", message)
             return responses.JSONResponse(content={"status": "error", "message": message }, status_code=statusCode)
+    
         else:
             return responses.JSONResponse(content={"status": "error", "message": e.__str__() }, status_code=400)
 
-async def getPuzzlePath(level: int) -> str:
+@app.post("/wins")
+async def registerWin(request: Request):
+    data = await request.json()
+    username = data["username"]
+    extraPoints = data["extraPoints"]
+    db.addPointsToUser(username, extraPoints)
+
+async def getPuzzlePath(level: int, num: int) -> str:
     difficulty = ""
     match level:
         case 0:
@@ -67,18 +74,23 @@ async def getPuzzlePath(level: int) -> str:
         case 3:
             difficulty = "extreme/"
     path = PROJECT_DIR + "backend/puzzles/" + difficulty
-    num = random.randint(1, 1000)
     path += str(num) + ".txt"
     return path
 
 @app.get("/fetchPuzzle/{level}")
 async def fetchPuzzle(level: int):
     print(f"request to fetch puzzle level {level}")
-    path = await getPuzzlePath(level)
+    num = random.randint(1, 1000)
+    path = await getPuzzlePath(level, num)
     print(f"path: {path}")
     with open(path, "r") as file:
-        lines = file.readlines()
-    return responses.JSONResponse(json.dumps(lines), 200)
+        puzzleLines = file.readlines()
+    with open(f"{PROJECT_DIR}backend/basePuzzles/{num}") as file:
+        solutionLines = file.readlines()
+    return responses.JSONResponse(json.dumps({
+        "puzzle":puzzleLines,
+        "solution":solutionLines
+    }), 200)
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host=HOST, port=PORT, reload=True)

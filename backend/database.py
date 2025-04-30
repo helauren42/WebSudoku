@@ -12,12 +12,11 @@ ENV_PATH = f"{PROJECT_DIR}backend/.env"
 DB_DIR = f"{PROJECT_DIR}backend/Database/"
 
 class UserData():
-    def __init__(self, username:str, email:str, hasPicture:bool=False, totalPoints:int=0, weeklyPoints:int=0, created_at:datetime=datetime.now()) -> None:
+    def __init__(self, username:str, email:str, hasPicture:bool=False, totalPoints:int=0, created_at:datetime=datetime.now()) -> None:
         self.username = username
         self.email = email
         self.hasPicture = hasPicture
         self.totalPoints = totalPoints
-        self.weeklyPoints = weeklyPoints
         self.creationDay = [created_at.year, created_at.month, created_at.day]
     def to_dict(self):
         return {
@@ -25,7 +24,6 @@ class UserData():
             'email': self.email,
             'hasPicture': self.hasPicture,
             'totalPoints': self.totalPoints,
-            'weeklyPoints': self.weeklyPoints,
             'creationDay': self.creationDay
         }
 class BaseDatabase():
@@ -110,10 +108,9 @@ class BaseDatabase():
         self.cursor.execute("SELECT * FROM users WHERE username=%s", (username,))
         columns = self.cursor.fetchone()
         print("!!! COLUMNS:")
-        print(username)
         print(type(columns))
         print(columns)
-        userData = UserData(username, columns[4], columns[5], columns[6], columns[7], columns[1])
+        userData = UserData(username, columns[4], columns[5], columns[6], columns[1])
         return userData
 
 class Database(BaseDatabase):
@@ -152,7 +149,15 @@ class Database(BaseDatabase):
         else:
             print("Username already taken")
             raise Exception("409\nUsername already taken")
-
+    def addPointsToUser(self, username, extraPoints):
+        self.cursor.execute("USE users")
+        self.cursor.execute(f"UPDATE users SET totalpoints = totalpoints + %s where username=%s", (extraPoints, username))
+        self.cursor.execute("USE dailyRanking")
+        self.cursor.execute(f"UPDATE users SET totalpoints = totalpoints + %s where username=%s", (extraPoints, username))
+        self.cursor.execute("USE weeklyRanking")
+        self.cursor.execute(f"UPDATE users SET totalpoints = totalpoints + %s where username=%s", (extraPoints, username))
+        self.cursor.execute("USE allTimeRanking")
+        self.cursor.execute(f"UPDATE users SET totalpoints = totalpoints + %s where username=%s", (extraPoints, username))
 
 if __name__ == "__main__":
     db = Database()
