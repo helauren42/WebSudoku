@@ -85,7 +85,7 @@ async def fetchPuzzle(level: int):
     print(f"path: {path}")
     with open(path, "r") as file:
         puzzleLines = file.readlines()
-    with open(f"{PROJECT_DIR}backend/basePuzzles/{num}") as file:
+    with open(f"{PROJECT_DIR}backend/basePuzzles/{num}.txt") as file:
         solutionLines = file.readlines()
     return responses.JSONResponse(json.dumps({
         "puzzle":puzzleLines,
