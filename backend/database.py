@@ -142,11 +142,11 @@ class Database(BaseDatabase):
         subprocess.run(["rm clear.sql"], shell=True, cwd=DB_DIR)
         print("cleared")
     def resetDaily(self):
-        print("truncating daily database")
-        self.cursor.execute(f"TRUNCATE dailyRanking")
+        print("reseting daily database")
+        self.cursor.execute(f"UPDATE dailyRanking SET points=0")
     def resetWeekly(self):
-        print("truncating weekly database")
-        self.cursor.execute(f"TRUNCATE weeklyRanking")
+        print("reseting weekly database")
+        self.cursor.execute(f"UPDATE weeklyRanking SET points=0")
     def login(self, loginObject: LoginRequest):
         print("db.login()")
         if not self.validLoginUsername(loginObject.username):
@@ -178,13 +178,13 @@ class Database(BaseDatabase):
 
 if __name__ == "__main__":
     db = Database()
-    if(len(sys.argv) > 1 and sys.argv[1] == "clear"):
+    if(len(sys.argv) > 1 and sys.argv[1] == "dailyReset"):
+        db.resetDaily()
+    elif(len(sys.argv) > 1 and sys.argv[1] == "weeklyReset"):
+        db.resetWeekly()
+    elif(len(sys.argv) > 1 and sys.argv[1] == "clear"):
         answer = input("Are you sure you want to delete the database? this action is irreversible (Y/n): ")
         if answer != "Y" and answer != "y" and answer != "yes":
            print("Operation was cancelled")
         db.clearDatabase()
-    elif(len(sys.argv) > 1 and sys.argv[1] == "dailyReset"):
-        db.resetDaily()
-    elif(len(sys.argv) > 1 and sys.argv[1] == "weeklyReset"):
-        db.resetWeekly()
 
