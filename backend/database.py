@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from datetime import datetime
 from logging import log
 import mysql.connector
@@ -94,8 +96,17 @@ class BaseDatabase():
         return False
     def insertNewUser(self, user, password, email):
         print("adding user to db")
+        # insert into users tables
         insertQuery = f"INSERT INTO users (username, password, email) VALUES(%s, %s, %s)"
         values = (user, password, email)
+        self.cursor.execute(insertQuery, values)
+        # insert into ranking tables
+        values = (user)
+        insertQuery = f"INSERT INTO dailyRanking (username) VALUES(%s)"
+        self.cursor.execute(insertQuery, values)
+        insertQuery = f"INSERT INTO weeklyRanking (username) VALUES(%s)"
+        self.cursor.execute(insertQuery, values)
+        insertQuery = f"INSERT INTO allTimeRanking (username) VALUES(%s)"
         self.cursor.execute(insertQuery, values)
 
     def userNotExists(self, username):
@@ -130,6 +141,12 @@ class Database(BaseDatabase):
         subprocess.run(f"sudo mysql < {DB_DIR}clear.sql", shell=True)
         subprocess.run(["rm clear.sql"], shell=True, cwd=DB_DIR)
         print("cleared")
+    def resetDaily(self):
+        print("truncating daily database")
+        self.cursor.execute(f"TRUNCATE dailyRanking")
+    def resetWeekly(self):
+        print("truncating weekly database")
+        self.cursor.execute(f"TRUNCATE weeklyRanking")
     def login(self, loginObject: LoginRequest):
         print("db.login()")
         if not self.validLoginUsername(loginObject.username):
@@ -165,7 +182,9 @@ if __name__ == "__main__":
         answer = input("Are you sure you want to delete the database? this action is irreversible (Y/n): ")
         if answer != "Y" and answer != "y" and answer != "yes":
            print("Operation was cancelled")
-           sys.exit(0)
         db.clearDatabase()
-        sys.exit(0)
+    elif(len(sys.argv) > 1 and sys.argv[1] == "dailyReset"):
+        db.resetDaily()
+    elif(len(sys.argv) > 1 and sys.argv[1] == "weeklyReset"):
+        db.resetWeekly()
 

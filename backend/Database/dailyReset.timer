@@ -1,0 +1,9 @@
+[Unit]
+Description=Runs daily reset sudoku service
+
+[Timer]
+OnCalendar=daily
+Persistent=True
+
+[Install]
+WantedBy=timers.target

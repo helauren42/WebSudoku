@@ -1,0 +1,10 @@
+[Unit]
+Description=Truncate daily rankings sudoku table
+
+[Timer]
+OnCalendar=daily
+Persistent=True
+
+[Install]
+WantedBy=timers.target
+

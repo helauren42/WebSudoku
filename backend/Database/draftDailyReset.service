@@ -1,0 +1,6 @@
+[Unit]
+Description=Truncate daily rankings sudoku table
+
+[Service]
+Type=OneShot
+

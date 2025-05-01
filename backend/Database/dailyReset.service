@@ -1,0 +1,7 @@
+[Unit]
+Description=Truncate daily rankings sudoku table
+
+[Service]
+Type=OneShot
+
+ExecStart=/home/henri/Projects/WebSudoku/backend/venv/bin/python3  /home/henri/Projects/WebSudoku/backend/database.py dailyReset

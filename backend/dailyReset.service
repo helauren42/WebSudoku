@@ -1,0 +1,1 @@
+ExecStart=source ~//home/henri/Projects/WebSudoku/backend/backend/venv/bin/activate /home/henri/Projects/WebSudoku/backend/database.py dailyReset
