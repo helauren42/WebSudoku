@@ -433,7 +433,26 @@ export class Board extends AbstractBoard {
 	giveUp() {
 		this.game = null
 	}
-	resize() {
-		this.makeCanvas()
+	// resize() {
+	// 	this.makeCanvas()
+	// }
+	moveSelection(side) {
+		if (!this.selectedRow || !this.selectedColumn)
+			return
+		switch (side) {
+			case "Down":
+				this.selectedRow = this.selectedRow < 9 ? this.selectedRow + 1 : this.selectedRow
+				break
+			case "Up":
+				this.selectedRow = this.selectedRow > 1 ? this.selectedRow - 1 : this.selectedRow
+				break
+			case "Left":
+				this.selectedColumn = this.selectedColumn > 1 ? this.selectedColumn - 1 : this.selectedColumn
+				break
+			case "Right":
+				this.selectedColumn = this.selectedColumn < 9 ? this.selectedColumn + 1 : this.selectedColumn
+				break
+		}
+		return { "x": this.selectedColumn - 1, "y": this.selectedRow - 1 }
 	}
 }

@@ -18,6 +18,8 @@ const GamePage = ({ gameState }) => {
 		selectedCell, setSelectedCell,
 		currentPage, setCurrentPage
 	} = gameState;
+	// useEffect(() => {
+	// })
 	return (
 		<>
 			< div id="game-page" >

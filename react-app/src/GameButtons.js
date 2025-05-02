@@ -32,15 +32,15 @@ export const RightSideButtons = ({ activeGame, selectedCell, BOARD }) => {
 				}
 				} >{insertMode}</button>
 				<div id="button-numbers-container">
-					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>1</button>
-					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>2</button>
-					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>3</button>
-					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>4</button>
-					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>5</button>
-					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>6</button>
-					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>7</button>
-					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>8</button>
-					<button className="button-numbers" onClick={(e) => buttonNumberClick(e.target.innerText)}>9</button>
+					<button className="button-numbers" id="button-number-1" onClick={(e) => buttonNumberClick(e.target.innerText)}>1</button>
+					<button className="button-numbers" id="button-number-2" onClick={(e) => buttonNumberClick(e.target.innerText)}>2</button>
+					<button className="button-numbers" id="button-number-3" onClick={(e) => buttonNumberClick(e.target.innerText)}>3</button>
+					<button className="button-numbers" id="button-number-4" onClick={(e) => buttonNumberClick(e.target.innerText)}>4</button>
+					<button className="button-numbers" id="button-number-5" onClick={(e) => buttonNumberClick(e.target.innerText)}>5</button>
+					<button className="button-numbers" id="button-number-6" onClick={(e) => buttonNumberClick(e.target.innerText)}>6</button>
+					<button className="button-numbers" id="button-number-7" onClick={(e) => buttonNumberClick(e.target.innerText)}>7</button>
+					<button className="button-numbers" id="button-number-8" onClick={(e) => buttonNumberClick(e.target.innerText)}>8</button>
+					<button className="button-numbers" id="button-number-9" onClick={(e) => buttonNumberClick(e.target.innerText)}>9</button>
 				</div>
 				{/* <div id="timer"></div> */}
 			</div>

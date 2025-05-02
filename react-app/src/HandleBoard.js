@@ -34,13 +34,36 @@ export const HandleBoard = ({ activeGame, currentLevel, triggerClick, canvasClic
 		const conflicts = conflictCount == 1 ? "conflict" : "conflicts"
 		alert(`You have ${errorCount} ${errors} ${conflictCount} ${conflicts} in your solution`)
 	})
+	/**
+	 * @param {string} key
+	*/
+	const handleKeyEvents = (key) => {
+		console.log("registered key down: ", key)
+		if (key.startsWith("Arrow")) {
+			const cell = BOARD.moveSelection(key.substring(5))
+			console.log("new cell: ", cell)
+			setSelectedCell(cell)
+		}
+		if (key == "i") {
+			const insertModeBtn = document.getElementById("insert-mode")
+			insertModeBtn.click()
+		}
+		if (key >= "1" && key <= "9") {
+			const button = document.getElementById(`button-number-${key}`)
+			button.click()
+		}
+	}
+
+	useEffect(() => {
+		document.addEventListener('keydown', (ev) => handleKeyEvents(ev.key))
+		return () => document.removeEventListener('keyup', handleKeyEvents);
+	}, [])
 	useEffect(() => {
 		if (!BOARD)
 			BOARD = new Board()
 		if (activeGame) {
-			const res = BOARD.updateSelection(canvasClickedX, canvasClickedY)
-			setSelectedCell(res)
-			console.log("selected cell: ", res)
+			const cell = BOARD.updateSelection(canvasClickedX, canvasClickedY)
+			setSelectedCell(cell)
 			if (BOARD.noEmptyCell()) {
 				const errorCount = BOARD.countErrors()
 				const conflictCount = BOARD.countConflicts()
@@ -64,7 +87,7 @@ export const HandleBoard = ({ activeGame, currentLevel, triggerClick, canvasClic
 		if (!BOARD)
 			BOARD = new Board()
 		BOARD.draw(activeGame, currentLevel)
-	}, [activeGame, canvasClickedX, canvasClickedY, triggerClick])
+	}, [activeGame, selectedCell])
 	return (
 		<></>
 	)
