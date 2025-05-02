@@ -1,37 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Navbar, setUserSectionWidth } from './Navbar';
 import { Account } from './Account.js';
-import { HandleBoard, BOARD, setClickPos } from './HandleBoard';
-import { LeftSideButtons, RightSideButtons } from './GameButtons.js'
+import { GamePage } from './GameButtons.js'
 import './App.css'
 import './GamePage.css'
 
 import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME, PAGE_GAME_FINISHED, Sections } from './Const';
-
-const GamePage = ({ gameState }) => {
-	const {
-		activeGame, setActiveGame,
-		currentLevel, setCurrentLevel,
-		canvasClickedX, setCanvasClickedX,
-		canvasClickedY, setCanvasClickedY,
-		triggerClick, setTriggerClick,
-		selectedCell, setSelectedCell,
-		currentPage, setCurrentPage,
-		submitPuzzle, setSubmitPuzzle
-	} = gameState;
-	return (
-		<>
-			< div id="game-page" >
-				<LeftSideButtons activeGame={activeGame} setActiveGame={setActiveGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} />
-				<div id="my-canvas-container">
-					<canvas id="my-canvas" onClick={(e) => { setClickPos(e.clientX, e.clientY, activeGame, triggerClick, setCanvasClickedX, setCanvasClickedY, setTriggerClick) }} ></canvas>
-				</div>
-				<HandleBoard activeGame={activeGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} canvasClickedX={canvasClickedX} canvasClickedY={canvasClickedY} triggerClick={triggerClick} setCanvasClickedX={setCanvasClickedX} setCanvasClickedY={setCanvasClickedY} selectedCell={selectedCell} setSelectedCell={setSelectedCell} />
-				<RightSideButtons activeGame={activeGame} selectedCell={selectedCell} BOARD={BOARD} submitPuzzle={submitPuzzle} setSubmitPuzzle={setSubmitPuzzle} />
-			</div>
-		</>
-	)
-}
 
 const HomePage = ({ setCurrentPage }) => {
 	return (
