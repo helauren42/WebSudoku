@@ -66,6 +66,8 @@ class AbstractBoard {
 		this.staticPuzzle = this.getStaticPuzzle()
 		this.selectedRow = null
 		this.selectedColumn = null
+		this.oldSelectedRow = null
+		this.oldSelectedColumn = null
 		this.msc = 10
 		this.makeCanvas()
 	}
@@ -437,8 +439,10 @@ export class Board extends AbstractBoard {
 	// 	this.makeCanvas()
 	// }
 	moveSelection(side) {
-		if (!this.selectedRow || !this.selectedColumn)
+		if (!this.selectedRow && !this.selectedColumn && !this.oldSelectedRow && !this.oldSelectedColumn)
 			return
+		this.selectedRow = !this.selectedRow ? this.oldSelectedRow : this.selectedRow
+		this.selectedColumn = !this.selectedColumn ? this.oldSelectedColumn : this.selectedColumn
 		switch (side) {
 			case "Down":
 				this.selectedRow = this.selectedRow < 9 ? this.selectedRow + 1 : this.selectedRow
@@ -453,6 +457,8 @@ export class Board extends AbstractBoard {
 				this.selectedColumn = this.selectedColumn < 9 ? this.selectedColumn + 1 : this.selectedColumn
 				break
 		}
+		this.oldSelectedRow = this.selectedRow
+		this.oldSelectedColumn = this.selectedColumn
 		return { "x": this.selectedColumn - 1, "y": this.selectedRow - 1 }
 	}
 }
