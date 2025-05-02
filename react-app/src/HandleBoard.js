@@ -29,11 +29,6 @@ export const setClickPos = (clientX, clientY, activeGame, triggerClick, setCanva
 export const HandleBoard = ({ activeGame, currentLevel, triggerClick, canvasClickedX, canvasClickedY, selectedCell, setSelectedCell }) => {
 	console.log("handleBoard called")
 
-	const displayErrorMessage = ((errorCount, conflictCount) => {
-		const errors = errorCount == 1 ? "error" : "errors"
-		const conflicts = conflictCount == 1 ? "conflict" : "conflicts"
-		alert(`You have ${errorCount} ${errors} ${conflictCount} ${conflicts} in your solution`)
-	})
 	/**
 	 * @param {string} key
 	*/
@@ -68,16 +63,6 @@ export const HandleBoard = ({ activeGame, currentLevel, triggerClick, canvasClic
 		if (activeGame) {
 			const cell = BOARD.updateSelection(canvasClickedX, canvasClickedY)
 			setSelectedCell(cell)
-			if (BOARD.noEmptyCell()) {
-				const errorCount = BOARD.countErrors()
-				const conflictCount = BOARD.countConflicts()
-				if (conflictCount > 0) {
-					displayErrorMessage(errorCount, conflictCount)
-				}
-				else {
-					// handleSuccess()
-				}
-			}
 		}
 	}, [canvasClickedX, canvasClickedY, triggerClick])
 	useEffect(() => {

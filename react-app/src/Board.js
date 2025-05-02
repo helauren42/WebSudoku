@@ -56,7 +56,8 @@ class Game {
 		this.level = level
 		this.puzzle = puzzle
 		this.solution = solution
-		console.log("solution: ", solution)
+		this.startTime = new Date()
+		console.log("START TIME: ", this.startTime)
 	}
 }
 
@@ -364,7 +365,7 @@ export class Board extends AbstractBoard {
 	countErrors() {
 		const puzzle = this.game.puzzle
 		const solution = this.game.solution
-		const count = []
+		let count = 0
 		for (let y = 0; y < 9; y++) {
 			for (let x = 0; x < 9; x++) {
 				if (solution[y][x] != puzzle[y][x].value)

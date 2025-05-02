@@ -16,7 +16,8 @@ const GamePage = ({ gameState }) => {
 		canvasClickedY, setCanvasClickedY,
 		triggerClick, setTriggerClick,
 		selectedCell, setSelectedCell,
-		currentPage, setCurrentPage
+		currentPage, setCurrentPage,
+		submitPuzzle, setSubmitPuzzle
 	} = gameState;
 	return (
 		<>
@@ -26,7 +27,7 @@ const GamePage = ({ gameState }) => {
 					<canvas id="my-canvas" onClick={(e) => { setClickPos(e.clientX, e.clientY, activeGame, triggerClick, setCanvasClickedX, setCanvasClickedY, setTriggerClick) }} ></canvas>
 				</div>
 				<HandleBoard activeGame={activeGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} canvasClickedX={canvasClickedX} canvasClickedY={canvasClickedY} triggerClick={triggerClick} setCanvasClickedX={setCanvasClickedX} setCanvasClickedY={setCanvasClickedY} selectedCell={selectedCell} setSelectedCell={setSelectedCell} />
-				<RightSideButtons activeGame={activeGame} selectedCell={selectedCell} BOARD={BOARD} />
+				<RightSideButtons activeGame={activeGame} selectedCell={selectedCell} BOARD={BOARD} submitPuzzle={submitPuzzle} setSubmitPuzzle={setSubmitPuzzle} />
 			</div>
 		</>
 	)
@@ -66,6 +67,7 @@ const Router = ({ currentPage, setCurrentPage, loggedIn, setLoggedIn }) => {
 	const [canvasClickedY, setCanvasClickedY] = useState(0)
 	const [triggerClick, setTriggerClick] = useState(0)
 	const [selectedCell, setSelectedCell] = useState(null)
+	const [submitPuzzle, setSubmitPuzzle] = useState(false)
 	const gameState = {
 		loggedIn,
 		setLoggedIn,
@@ -82,7 +84,9 @@ const Router = ({ currentPage, setCurrentPage, loggedIn, setLoggedIn }) => {
 		selectedCell,
 		setSelectedCell,
 		currentPage,
-		setCurrentPage
+		setCurrentPage,
+		submitPuzzle,
+		setSubmitPuzzle
 	};
 
 	return (
