@@ -41,14 +41,14 @@ html {
 
 #title:active {
 	transform: scale(0.9);
-	transform-origin: left;
+	transform-origin: center;
 }
 
 #nav-menu {
 	position: relative;
 	display: flex;
 	justify-content: space-around;
-	color: rgb(249, 211, 180);
+	/* color: rgb(249, 211, 180); */
 }
 
 .nav-button {

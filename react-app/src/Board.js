@@ -52,9 +52,11 @@ class Cell {
  * @class
  */
 class Game {
-	constructor(level, puzzle) {
+	constructor(level, puzzle, solution) {
 		this.level = level
 		this.puzzle = puzzle
+		this.solution = solution
+		console.log("solution: ", solution)
 	}
 }
 
@@ -62,8 +64,8 @@ class AbstractBoard {
 	constructor() {
 		this.game = null
 		this.staticPuzzle = this.getStaticPuzzle()
-		this.row = null
-		this.column = null
+		this.selectedRow = null
+		this.selectedColumn = null
 		this.msc = 10
 		this.makeCanvas()
 	}
@@ -179,8 +181,8 @@ class AbstractBoard {
 	}
 	drawSelectedCell() {
 		console.log("drawing selected cell")
-		const x = this.column - 1
-		const y = this.row - 1
+		const x = this.selectedColumn - 1
+		const y = this.selectedRow - 1
 		const cellX = this.msc + this.cellLength * x
 		const cellY = this.msc + this.cellLength * y
 		// make background light color
@@ -260,15 +262,14 @@ class AbstractBoard {
 	async fetchDynamicPuzzle(currentLevel) {
 		const url = "http://" + SOCKET_ADDRESS + '/fetchPuzzle/' + currentLevel
 		console.log(url)
-		const arrayPuzzle = await fetch(url).then((res) => {
+		const data = await fetch(url).then((res) => {
 			return res.json()
 		}
-		).then((data) => {
-			return JSON.parse(data)
+		).then((response) => {
+			return JSON.parse(response)
 		})
-		console.log("!!!")
-		console.log(arrayPuzzle)
-		return this.makeDynamicPuzzle(arrayPuzzle)
+		console.log(data)
+		return [this.makeDynamicPuzzle(data["puzzle"]), data["solution"]]
 	}
 }
 
@@ -296,14 +297,16 @@ export class Board extends AbstractBoard {
 	drawDynamicPuzzle() {
 		console.log("drawDynamicPuzzle: ")
 		this.drawPuzzle(this.game.puzzle)
-		if (this.column && this.row && this.column >= 1 && this.column <= 9 && this.row >= 1 && this.row <= 9)
+		if (this.selectedColumn && this.selectedRow && this.selectedColumn >= 1 && this.selectedColumn <= 9 && this.selectedRow >= 1 && this.selectedRow <= 9) {
 			this.drawSelectedCell()
+			console.log("draw selected cell called !!!")
+		}
 	}
 	async fetchAndDrawDynamicPuzzle(currentLevel) {
 		if (!this.game || this.game.level != currentLevel) {
 			console.log(`new game ${!this.game ? "no active game" : "different level"}`)
-			const puzzle = await this.fetchDynamicPuzzle(currentLevel);
-			this.game = new Game(currentLevel, puzzle)
+			const puzzleAndSolution = await this.fetchDynamicPuzzle(currentLevel);
+			this.game = new Game(currentLevel, puzzleAndSolution[0], puzzleAndSolution[1])
 		}
 		this.drawDynamicPuzzle()
 	}
@@ -315,7 +318,7 @@ export class Board extends AbstractBoard {
 			console.log("You tried to modify a cell from the initial puzzle: ", err)
 		}
 		console.log("cell new value: ", this.game.puzzle[x][y].value)
-		this.drawPuzzle(this.game.puzzle)
+		this.drawDynamicPuzzle()
 	}
 	updateCellNote(y, x, value) {
 		this.game.puzzle[x][y].addNotes(value)
@@ -335,16 +338,16 @@ export class Board extends AbstractBoard {
 		const newrow = Math.ceil(posY)
 
 		if ((newcolumn < 1 || newrow < 1 || newcolumn > 9 || newrow > 9)
-			|| (this.column && this.row && this.column == newcolumn && this.row == newrow)) {
-			this.column = null;
+			|| (this.selectedColumn && this.selectedRow && this.selectedColumn == newcolumn && this.selectedRow == newrow)) {
+			this.selectedColumn = null;
 			this.newrow = null;
 			console.log("unselected cell")
 			return null
 		}
-		this.column = newcolumn
-		this.row = newrow
-		console.log(`selected row: ${this.row}, col: ${this.column}`)
-		return { "x": this.column - 1, "y": this.row - 1 }
+		this.selectedColumn = newcolumn
+		this.selectedRow = newrow
+		console.log(`selected row: ${this.selectedRow}, col: ${this.selectedColumn}`)
+		return { "x": this.selectedColumn - 1, "y": this.selectedRow - 1 }
 	}
 	draw(activeGame, currentLevel) {
 		if (!activeGame) {
@@ -355,6 +358,19 @@ export class Board extends AbstractBoard {
 			console.log("drawing dynamic puzzle level ", currentLevel)
 			this.fetchAndDrawDynamicPuzzle(currentLevel)
 		}
+	}
+	countErrors() {
+		const puzzle = this.game.puzzle
+		const solution = this.game.solution
+		const count = []
+		for (let y = 0; y < 9; y++) {
+			for (let x = 0; x < 9; x++) {
+				if (solution[y][x] != puzzle[y][x].value)
+					count++
+			}
+		}
+		console.log("found ", count, " amount of errors in submitted puzzle")
+		return count
 	}
 	countConflicts() {
 		const puzzle = this.game.puzzle;

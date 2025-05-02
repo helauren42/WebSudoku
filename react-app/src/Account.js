@@ -34,6 +34,7 @@ class AccountProfile {
 		this.hasPicture = hasPicture
 		this.picturePath = picturePath
 		this.totalPoints = totalPoints
+		console.log("this total points: ", this.totalPoints)
 		this.creationDay = creationDay
 		this.displayedUsername = this.trimDisplay(this.username, 18)
 		this.displayedEmail = this.trimDisplay(this.email, 30)
@@ -161,7 +162,7 @@ const LoginSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
 			setLoggedIn(true)
 			setCurrentSection(SECTIONS.profile)
 			const accountProfileData = data["accountProfile"]
-			ACCOUNT_PROFILE.login(accountProfileData.username, accountProfileData.email, accountProfileData.wins, accountProfileData.creationDay, accountProfileData.hasPicture, accountProfileData.picturePath,)
+			ACCOUNT_PROFILE.login(accountProfileData.username, accountProfileData.email, accountProfileData.totalPoints, accountProfileData.creationDay, accountProfileData.hasPicture, accountProfileData.picturePath,)
 		}
 		else {
 			console.log("Login error:", data);

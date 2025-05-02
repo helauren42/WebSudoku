@@ -17,11 +17,9 @@ export const RightSideButtons = ({ activeGame, selectedCell, BOARD }) => {
 			return
 		}
 		if (insertMode == MODE_INSERT) {
-			console.log("setting selected cell to clicked number")
 			BOARD.updateCellValue(selectedCell["x"], selectedCell["y"], number)
 		}
 		else {
-			console.log("adding note to selected cell")
 			BOARD.updateCellNote(selectedCell["x"], selectedCell["y"], number)
 		}
 	}
