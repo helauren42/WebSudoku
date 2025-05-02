@@ -6,7 +6,7 @@ import { LeftSideButtons, RightSideButtons } from './GameButtons.js'
 import './App.css'
 import './GamePage.css'
 
-import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME, PAGE_GAME_FINISHED } from './Const';
+import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME, PAGE_GAME_FINISHED, Sections } from './Const';
 
 const GamePage = ({ gameState }) => {
 	const {
@@ -32,44 +32,40 @@ const GamePage = ({ gameState }) => {
 	)
 }
 
-const Router = ({ gameState }) => {
-	const {
-		loggedIn, setLoggedIn,
-		activeGame, setActiveGame,
-		currentLevel, setCurrentLevel,
-		canvasClickedX, setCanvasClickedX,
-		canvasClickedY, setCanvasClickedY,
-		triggerClick, setTriggerClick,
-		selectedCell, setSelectedCell,
-		currentPage, setCurrentPage
-	} = gameState;
+const HomePage = ({ setCurrentPage }) => {
 	return (
-		<>
-			{
-				gameState.currentPage == PAGE_GAME &&
-				<GamePage gameState={gameState} />
-			}
-			{
-				gameState.currentPage == PAGE_ACCOUNT &&
-				<Account loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-			}
-			{/* { */}
-			{/* 	gameState.currentPage == PAGE_HOME && */}
-			{/* 	<Account loggedIn={loggedIn} setLoggedIn={setLoggedIn} /> */}
-			{/* } */}
-		</>
+		<div id="home-page">
+			<div id="help-section">
+				<div className='help-subsection' id="points-section">
+					<h2>Points System</h2>
+					<p className='help-paragraph'>Base points per difficulty:<br />
+						Easy: 50<br />
+						Medium: 90<br />
+						Hard: 300<br />
+						Extreme: 1200<br />
+					</p>
+				</div>
+				<div className='help-subsection' id="keymap-section">
+					<h2>Keymaps</h2>
+					<p className='help-paragraph'>&lt;i&gt;: Toggle between insert and notes mode<br />
+						&lt;arrow keys&gt;: Move around the selection of a cell
+					</p>
+				</div>
+			</div>
+			<div id="home-board">
+				<h1 id="home-play" onClick={() => setCurrentPage(PAGE_GAME)}>Play Here</h1>
+			</div>
+		</div >
 	)
 }
 
-const App = () => {
-	const [loggedIn, setLoggedIn] = useState(false)
+const Router = ({ currentPage, setCurrentPage, loggedIn, setLoggedIn }) => {
 	const [activeGame, setActiveGame] = useState(false)
 	const [currentLevel, setCurrentLevel] = useState(0)
 	const [canvasClickedX, setCanvasClickedX] = useState(0)
 	const [canvasClickedY, setCanvasClickedY] = useState(0)
 	const [triggerClick, setTriggerClick] = useState(0)
 	const [selectedCell, setSelectedCell] = useState(null)
-	const [currentPage, setCurrentPage] = useState(PAGE_GAME)
 	const gameState = {
 		loggedIn,
 		setLoggedIn,
@@ -88,12 +84,33 @@ const App = () => {
 		currentPage,
 		setCurrentPage
 	};
+
+	return (
+		<>
+			{
+				gameState.currentPage == PAGE_GAME &&
+				<GamePage gameState={gameState} />
+			}
+			{
+				gameState.currentPage == PAGE_ACCOUNT &&
+				<Account loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+			}
+			{
+				gameState.currentPage == PAGE_HOME &&
+				<HomePage setCurrentPage={setCurrentPage} />
+			}
+		</>
+	)
+}
+
+const App = () => {
+	const [loggedIn, setLoggedIn] = useState(false)
+	const [currentPage, setCurrentPage] = useState(PAGE_HOME)
 	console.log('Current Page1:', currentPage);
-	console.log('Game State1:', gameState);
 	return (
 		<>
 			<Navbar setCurrentPage={setCurrentPage} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-			<Router gameState={gameState} />
+			<Router currentPage={currentPage} setCurrentPage={setCurrentPage} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
 		</>
 	)
 }
