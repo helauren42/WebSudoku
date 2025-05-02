@@ -55,8 +55,12 @@ export const HandleBoard = ({ activeGame, currentLevel, triggerClick, canvasClic
 	}
 
 	useEffect(() => {
-		document.addEventListener('keydown', (ev) => handleKeyEvents(ev.key))
-		return () => document.removeEventListener('keyup', handleKeyEvents);
+		const listener = (ev) => handleKeyEvents(ev.key)
+		document.addEventListener('keydown', listener)
+		return () => {
+			console.log("destroying keydown ev listener");
+			document.removeEventListener('keydown', listener);
+		}
 	}, [])
 	useEffect(() => {
 		if (!BOARD)
