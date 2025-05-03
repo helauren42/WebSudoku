@@ -423,15 +423,20 @@ export class Board extends AbstractBoard {
 		}
 		return conflictCount;
 	}
-	noEmptyCell() {
+	hasEmptyCell() {
 		const puzzle = this.game.puzzle
+		console.log("puzzle: ", puzzle)
 		if (!puzzle)
 			return false
-		for (let y = 0; y < 9; y++)
-			for (let x = 0; x < 9; x++)
+		for (let y = 0; y < 9; y++) {
+			for (let x = 0; x < 9; x++) {
+				console.log(puzzle[y][x])
+				console.log(puzzle[y][x].value == 0)
 				if (puzzle[y][x].value == 0)
-					return false
-		return true;
+					return true
+			}
+		}
+		return false
 	}
 	giveUp() {
 		this.game = null

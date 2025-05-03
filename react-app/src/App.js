@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Navbar, setUserSectionWidth } from './Navbar';
 import { Account } from './Account.js';
 import { GamePage } from './GameButtons.js'

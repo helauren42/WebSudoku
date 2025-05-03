@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { HandleBoard, BOARD, setClickPos } from './HandleBoard';
+
 const MODE_INSERT = "insert"
 const MODE_NOTE = "note"
 
@@ -24,12 +26,20 @@ export const RightSideButtons = ({ activeGame, selectedCell, BOARD, submitPuzzle
 		}
 	}
 	useEffect(() => {
-		if (submitPuzzle == false)
+		console.log("submit puzzle effect(): ", submitPuzzle)
+		const popup = document.getElementById("submit-puzzle")
+		if (submitPuzzle == false) {
+			popup.style.display = "none"
 			return
-		const messages = document.getElementById("message-content")
-		if (!BOARD.noEmptyCell()) {
+		}
+		console.log("get messages element by id")
+		const messages = document.getElementById("error-message-content")
+		popup.style.display = "flex"
+		popup.close()
+		popup.showModal()
+		if (BOARD.hasEmptyCell()) {
+			console.log("has empty cell")
 			messages.textContent = "Finish the puzzle before submitting"
-			setSubmitPuzzle(false)
 			return
 		}
 		const errorCount = BOARD.countErrors()
@@ -37,12 +47,9 @@ export const RightSideButtons = ({ activeGame, selectedCell, BOARD, submitPuzzle
 		if (conflictCount > 0) {
 			const errors = errorCount == 1 ? "error" : "errors"
 			const conflicts = conflictCount == 1 ? "conflict" : "conflicts"
-			const elem = document.getElementById("popup-message-content")
+			const elem = document.getElementById("error-message-content")
 			elem.textContent = `You have ${errorCount} ${errors} and ${conflictCount} ${conflicts} in your solution`
-			setSubmitPuzzle(false)
-			return
 		}
-		setSubmitPuzzle(false)
 	}, [submitPuzzle])
 
 	return (
@@ -50,8 +57,7 @@ export const RightSideButtons = ({ activeGame, selectedCell, BOARD, submitPuzzle
 			<div id="game-interactions">
 				<button className="playButtons" id="insert-mode" onClick={() => {
 					insertMode == MODE_INSERT ? setInsertMode(MODE_NOTE) : setInsertMode(MODE_INSERT)
-				}
-				} >{insertMode}</button>
+				}} >{insertMode}</button>
 				<div id="button-numbers-container">
 					<button className="button-numbers" id="button-number-1" onClick={(e) => buttonNumberClick(e.target.innerText)}>1</button>
 					<button className="button-numbers" id="button-number-2" onClick={(e) => buttonNumberClick(e.target.innerText)}>2</button>
@@ -70,7 +76,7 @@ export const RightSideButtons = ({ activeGame, selectedCell, BOARD, submitPuzzle
 	)
 }
 
-export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCurrentLevel }) => {
+export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCurrentLevel, setSubmitPuzzle }) => {
 	function updateLevel(e) {
 		console.log("updating level: ", e.target.value)
 		switch (e.target.value) {
@@ -91,10 +97,22 @@ export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCu
 		}
 	}
 
+	useEffect(() => {
+		const submitElem = document.getElementById("submit-puzzle")
+		submitElem.close()
+		submitElem.show()
+	})
 	return (
 		<div id="left-side">
-			{/* <h4 id="popup-title"><u>Help</u></h4> */}
-			<p id="messages"><i id="popup-message-content"></i></p>
+			<dialog id="submit-puzzle">
+				<div id="submit-puzzle-nav">
+					<h4 ></h4>
+					<h2 id="submit-puzzle-title" ><u>Submission</u></h2>
+					<button id="submit-puzzle-cross" onClick={() => setSubmitPuzzle(false)}>X</button>
+				</div>
+				<p id="messages"><i id="error-message-content"></i></p>
+				<h5></h5>
+			</dialog>
 			<div id="game-mode-buttons">
 				<select id="select-difficulty" className="playButtons" onChange={(e) => updateLevel(e)}>
 					<option value="Easy">Easy</option>
@@ -113,7 +131,31 @@ export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCu
 					)
 				}
 			</div >
-		</div>
+		</div >
 	)
 }
 
+export const GamePage = ({ gameState }) => {
+	const {
+		activeGame, setActiveGame,
+		currentLevel, setCurrentLevel,
+		canvasClickedX, setCanvasClickedX,
+		canvasClickedY, setCanvasClickedY,
+		triggerClick, setTriggerClick,
+		selectedCell, setSelectedCell,
+		currentPage, setCurrentPage,
+		submitPuzzle, setSubmitPuzzle
+	} = gameState;
+	return (
+		<>
+			< div id="game-page" >
+				<LeftSideButtons activeGame={activeGame} setActiveGame={setActiveGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} setSubmitPuzzle={setSubmitPuzzle} />
+				<div id="my-canvas-container">
+					<canvas id="my-canvas" onClick={(e) => { setClickPos(e.clientX, e.clientY, activeGame, triggerClick, setCanvasClickedX, setCanvasClickedY, setTriggerClick) }} ></canvas>
+				</div>
+				<HandleBoard activeGame={activeGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} canvasClickedX={canvasClickedX} canvasClickedY={canvasClickedY} triggerClick={triggerClick} setCanvasClickedX={setCanvasClickedX} setCanvasClickedY={setCanvasClickedY} selectedCell={selectedCell} setSelectedCell={setSelectedCell} />
+				<RightSideButtons activeGame={activeGame} selectedCell={selectedCell} BOARD={BOARD} submitPuzzle={submitPuzzle} setSubmitPuzzle={setSubmitPuzzle} />
+			</div>
+		</>
+	)
+}
