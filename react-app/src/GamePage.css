@@ -130,7 +130,7 @@
 	top: 50%;
 	transform: translate(-50%, -50%);
 	z-index: 10;
-	box-shadow: 2px 2px 15px #343d39, -2px -2px 15px #343d39;
+	box-shadow: 0px 0px 15px 5px #343d39;
 	display: none;
 	flex-direction: column;
 	justify-content: space-between;

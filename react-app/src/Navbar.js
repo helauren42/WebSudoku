@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 
 import { ACCOUNT_PROFILE } from './Account.js';
 import { PROJECT_SRC } from './Const.js'
-import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME } from './Const';
+import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME, PAGE_RANKINGS } from './Const';
 import UserIcon from './imgs/user.svg'
 
 function setUserSectionWidth() {
@@ -29,7 +29,7 @@ export const Navbar = ({ setCurrentPage, loggedIn, setLoggedIn }) => {
 			<div id="navbar-elements">
 				<h1 id="title" onClick={() => setCurrentPage(PAGE_HOME)}>Sudoku</h1>
 				<div id="nav-menu">
-					<button className='nav-button'>Rankings</button>
+					<button className='nav-button' onClick={() => setCurrentPage(PAGE_RANKINGS)}>Rankings</button>
 					<button className='nav-button' onClick={() => setCurrentPage(PAGE_GAME)} >Play</button>
 				</div>
 				<div id="user-section" onClick={() => setCurrentPage(PAGE_ACCOUNT)}>

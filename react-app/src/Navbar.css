@@ -30,7 +30,7 @@ html {
 
 #title {
 	font-size: 4rem;
-	text-shadow: 1px 1px 2px black;
+	text-shadow: 0px 0px 3px black;
 }
 
 #title:hover {
@@ -54,7 +54,7 @@ html {
 .nav-button {
 	margin: 0 auto;
 	box-sizing: border-box;
-	font-size: 1rem;
+	font-size: 1.6rem;
 	width: calc(11 * 1rem);
 	padding: 1rem;
 	border-width: 0.15rem;
@@ -62,7 +62,7 @@ html {
 	border-color: #343d39;
 	color: #343d39;
 	font-weight: bold;
-	box-shadow: 0 2px 4px rgba(60, 82, 82, 0.5);
+	box-shadow: 0 0px 3px rgba(60, 82, 82, 0.5);
 	border-radius: 1rem;
 	background-color: #83978b;
 }

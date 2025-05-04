@@ -7,6 +7,7 @@ export const PAGE_GAME = "GAME"
 export const PAGE_GAME_FINISHED = "GAME_FINISHED"
 export const PAGE_HOME = "HOME"
 export const PAGE_ACCOUNT = "ACCOUNT"
+export const PAGE_RANKINGS = "RANKINGS"
 
 export class Sections {
 	login = 0

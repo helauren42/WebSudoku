@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { Navbar, setUserSectionWidth } from './Navbar';
 import { Account } from './Account.js';
 import { GamePage } from './GameButtons.js'
+import { RankingsPage } from './Rankings';
 import './App.css'
 import './GamePage.css'
 
-import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME, PAGE_GAME_FINISHED, Sections } from './Const';
+import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME, PAGE_GAME_FINISHED, Sections, PAGE_RANKINGS } from './Const';
 
 const HomePage = ({ setCurrentPage }) => {
 	return (
@@ -77,6 +78,11 @@ const Router = ({ currentPage, setCurrentPage, loggedIn, setLoggedIn }) => {
 				gameState.currentPage == PAGE_HOME &&
 				<HomePage setCurrentPage={setCurrentPage} />
 			}
+			{
+				gameState.currentPage == PAGE_RANKINGS &&
+				<RankingsPage />
+			}
+
 		</>
 	)
 }

@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from handleRequests import LoginRequest, SignupRequest, PointsRequestData
 from const import HOST, PORT, PROJECT_DIR
-from database import Database, UserData
+from database import Database
 
 app = FastAPI()
 db = Database()
@@ -91,14 +91,13 @@ async def fetchPuzzle(level: int):
 @app.get("/getRankings/{period}")
 async def getRankings(period: int):
     rankings = db.getRankings(period)
-    return responses.JSONResponse(json.dumps(rankings))
+    return responses.JSONResponse(rankings)
 
 @app.post("/addPoints")
 async def addPoints(data: PointsRequestData):
     print("addPoints request")
     print("addPoints: ", data.username, " ", data.points)
     db.addPointsToUser(data.username, data.points)
-
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host=HOST, port=PORT, reload=True)

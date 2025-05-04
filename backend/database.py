@@ -172,7 +172,7 @@ class Database(BaseDatabase):
             case 1:
                 self.cursor.execute(f"SELECT * FROM weeklyRanking ORDER BY points DESC")
             case 2:
-                self.cursor.execute(f"SELECT * FROM allTime ORDER BY points DESC")
+                self.cursor.execute(f"SELECT * FROM allTimeRanking ORDER BY points DESC")
         rankings = self.cursor.fetchall()
         print("Rankings fetched: ", rankings)
         return rankings
