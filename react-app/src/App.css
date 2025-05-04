@@ -87,7 +87,7 @@ h2 {
 #home-play {
 	font-size: 3rem;
 	text-shadow: 2px 2px 2px #313533;
-	color: #3b4641;
+	color: rgba(5, 30, 20);
 }
 
 #home-play:hover {

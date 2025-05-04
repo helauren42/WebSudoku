@@ -1,12 +1,13 @@
 import { PAGE_GAME, PAGE_ACCOUNT, PAGE_HOME, TITLES, PORT_SERVER } from './Const';
 import { useState, useEffect } from 'react';
-import { Sections } from './Const.js'
+import { Sections, SOCKET_ADDRESS, } from './Const.js'
 import './Account.css'
 
 const SECTIONS = new Sections()
 
 class AccountProfile {
 	constructor() {
+		this.tempPoints = 0
 		this.reset()
 	}
 	reset() {
@@ -42,6 +43,30 @@ class AccountProfile {
 	logout() {
 		this.reset()
 	}
+	async sendPoints(points) {
+		console.log("sending points", points)
+		console.log("from: ", this.username)
+		const data = await fetch(`http://${SOCKET_ADDRESS}/addPoints`,
+			{
+				method: "POST",
+				body: JSON.stringify({
+					username: this.username,
+					points: points
+				}),
+				headers: {
+					"Content-type": "application/json"
+				}
+			})
+		console.log("data: ", data)
+	}
+	async addTempPoints(addPoints) {
+		console.log("adding temp points: ", addPoints)
+		this.tempPoints += addPoints
+		if (this.login != undefined) {
+			await this.sendPoints(this.tempPoints)
+			this.tempPoints = 0
+		}
+	}
 }
 
 export const ACCOUNT_PROFILE = new AccountProfile()
@@ -68,7 +93,7 @@ const SignupSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
 		e.preventDefault()
 		e.target.reset()
 		const body = JSON.stringify({ username: username, password: password, email: email })
-		const data = await fetch(`http://127.0.0.1:${PORT_SERVER}/signup`, {
+		const data = await fetch(`http://${SOCKET_ADDRESS}/signup`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: body
@@ -151,7 +176,7 @@ const LoginSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
 		console.log("submitting login");
 		e.preventDefault()
 		e.target.reset()
-		const data = await fetch("http://127.0.0.1:5463/login", {
+		const data = await fetch(`http://${SOCKET_ADDRESS}/login`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ username, password }),

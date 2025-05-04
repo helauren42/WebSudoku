@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 
 import { HandleBoard, BOARD, setClickPos } from './HandleBoard';
+import { Account, ACCOUNT_PROFILE } from "./Account";
 
 const MODE_INSERT = "insert"
 const MODE_NOTE = "note"
 
-export const RightSideButtons = ({ activeGame, selectedCell, BOARD, submitPuzzle, setSubmitPuzzle }) => {
+export const RightSideButtons = ({ activeGame, selectedCell, BOARD, submitPuzzle, setSubmitPuzzle, loggedIn }) => {
 	const [insertMode, setInsertMode] = useState(MODE_INSERT)
 	const buttonNumberClick = (stringNum) => {
 		const number = parseInt(stringNum)
@@ -25,6 +26,10 @@ export const RightSideButtons = ({ activeGame, selectedCell, BOARD, submitPuzzle
 			BOARD.updateCellNote(selectedCell["x"], selectedCell["y"], number)
 		}
 	}
+	const addPointsToAccount = (async () => {
+		const points = BOARD.passSubmission()
+		await ACCOUNT_PROFILE.addTempPoints(points)
+	})
 	useEffect(() => {
 		console.log("submit puzzle effect(): ", submitPuzzle)
 		const popup = document.getElementById("submit-puzzle")
@@ -37,6 +42,8 @@ export const RightSideButtons = ({ activeGame, selectedCell, BOARD, submitPuzzle
 		popup.style.display = "flex"
 		popup.close()
 		popup.showModal()
+		addPointsToAccount()
+		return
 		if (BOARD.hasEmptyCell()) {
 			console.log("has empty cell")
 			messages.textContent = "Finish the puzzle before submitting"
@@ -49,6 +56,9 @@ export const RightSideButtons = ({ activeGame, selectedCell, BOARD, submitPuzzle
 			const conflicts = conflictCount == 1 ? "conflict" : "conflicts"
 			const elem = document.getElementById("error-message-content")
 			elem.textContent = `You have ${errorCount} ${errors} and ${conflictCount} ${conflicts} in your solution`
+		}
+		else {
+			addPointsToAccount()
 		}
 	}, [submitPuzzle])
 
@@ -137,6 +147,7 @@ export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCu
 
 export const GamePage = ({ gameState }) => {
 	const {
+		loggedIn, setLoggedIn,
 		activeGame, setActiveGame,
 		currentLevel, setCurrentLevel,
 		canvasClickedX, setCanvasClickedX,
@@ -154,7 +165,7 @@ export const GamePage = ({ gameState }) => {
 					<canvas id="my-canvas" onClick={(e) => { setClickPos(e.clientX, e.clientY, activeGame, triggerClick, setCanvasClickedX, setCanvasClickedY, setTriggerClick) }} ></canvas>
 				</div>
 				<HandleBoard activeGame={activeGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} canvasClickedX={canvasClickedX} canvasClickedY={canvasClickedY} triggerClick={triggerClick} setCanvasClickedX={setCanvasClickedX} setCanvasClickedY={setCanvasClickedY} selectedCell={selectedCell} setSelectedCell={setSelectedCell} />
-				<RightSideButtons activeGame={activeGame} selectedCell={selectedCell} BOARD={BOARD} submitPuzzle={submitPuzzle} setSubmitPuzzle={setSubmitPuzzle} />
+				<RightSideButtons activeGame={activeGame} selectedCell={selectedCell} BOARD={BOARD} submitPuzzle={submitPuzzle} setSubmitPuzzle={setSubmitPuzzle} loggedIn={loggedIn} />
 			</div>
 		</>
 	)
