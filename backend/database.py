@@ -164,6 +164,19 @@ class Database(BaseDatabase):
         self.cursor.execute(f"UPDATE weeklyRanking SET points = points + %s where username=%s", (extraPoints, username))
         self.cursor.execute(f"UPDATE allTimeRanking SET points = points + %s where username=%s", (extraPoints, username))
 
+# 0-daily 1-weekly 2-alltime
+    def getRankings(self, period:int) -> list[tuple[str, int]]:
+        match period:
+            case 0:
+                self.cursor.execute(f"SELECT * FROM dailyRanking ORDER BY points DESC")
+            case 1:
+                self.cursor.execute(f"SELECT * FROM weeklyRanking ORDER BY points DESC")
+            case 2:
+                self.cursor.execute(f"SELECT * FROM allTime ORDER BY points DESC")
+        rankings = self.cursor.fetchall()
+        print("Rankings fetched: ", rankings)
+        return rankings
+
 if __name__ == "__main__":
     db = Database()
     if(len(sys.argv) > 1 and sys.argv[1] == "dailyReset"):

@@ -86,6 +86,13 @@ async def fetchPuzzle(level: int):
         "solution":solutionLines
     }), 200)
 
+# 0-daily 1-weekly 2-alltime
+
+@app.get("/getRankings/{period}")
+async def getRankings(period: int):
+    rankings = db.getRankings(period)
+    return responses.JSONResponse(json.dumps(rankings))
+
 @app.post("/addPoints")
 async def addPoints(data: PointsRequestData):
     print("addPoints request")
