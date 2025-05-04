@@ -4,7 +4,7 @@ import uvicorn
 import random
 from fastapi.middleware.cors import CORSMiddleware
 
-from handleRequests import LoginRequest, SignupRequest
+from handleRequests import LoginRequest, SignupRequest, PointsRequestData
 from const import HOST, PORT, PROJECT_DIR
 from database import Database, UserData
 
@@ -47,6 +47,7 @@ async def signup(signup: SignupRequest):
     except Exception as e:
         if e.__str__().find("\n"):
             splitted = e.__str__().split('\n')
+            print(" !!!!: ", splitted)
             statusCode = int(splitted[0])
             message = splitted[1]
             print("Could not signup: ", message)
@@ -54,13 +55,6 @@ async def signup(signup: SignupRequest):
     
         else:
             return responses.JSONResponse(content={"status": "error", "message": e.__str__() }, status_code=400)
-
-@app.post("/wins")
-async def registerWin(request: Request):
-    data = await request.json()
-    username = data["username"]
-    extraPoints = data["extraPoints"]
-    db.addPointsToUser(username, extraPoints)
 
 async def getPuzzlePath(level: int, num: int) -> str:
     difficulty = ""
@@ -91,6 +85,13 @@ async def fetchPuzzle(level: int):
         "puzzle":puzzleLines,
         "solution":solutionLines
     }), 200)
+
+@app.post("/addPoints")
+async def addPoints(data: PointsRequestData):
+    print("addPoints request")
+    print("addPoints: ", data.username, " ", data.points)
+    db.addPointsToUser(data.username, data.points)
+
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host=HOST, port=PORT, reload=True)

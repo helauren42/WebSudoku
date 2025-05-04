@@ -42,15 +42,6 @@ class Cell {
 	}
 }
 
-/**
- * @typedef {Object} Game
- * @property {string} level - The game difficulty level.
- * @property {Cell[][]} puzzle - 2D array of Cell objects (e.g., 9x9 grid).
- */
-
-/**
- * @class
- */
 class Game {
 	constructor(level, puzzle, solution) {
 		this.level = level
@@ -466,5 +457,12 @@ export class Board extends AbstractBoard {
 		this.oldSelectedRow = this.selectedRow
 		this.oldSelectedColumn = this.selectedColumn
 		return { "x": this.selectedColumn - 1, "y": this.selectedRow - 1 }
+	}
+	passSubmission() {
+		const pointsList = [50, 90, 320, 1200]
+		const difficulty = this.game.level
+		this.game = null
+		const attributedPoints = pointsList[difficulty]
+		return attributedPoints
 	}
 }

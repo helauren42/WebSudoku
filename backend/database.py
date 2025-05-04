@@ -15,6 +15,7 @@ DB_DIR = f"{PROJECT_DIR}backend/Database/"
 
 class UserData():
     def __init__(self, username:str, email:str, hasPicture:bool=False, totalPoints:int=0, created_at:datetime=datetime.now()) -> None:
+        print("initializing user data")
         self.username = username
         self.email = email
         self.hasPicture = hasPicture
@@ -101,7 +102,7 @@ class BaseDatabase():
         values = (user, password, email)
         self.cursor.execute(insertQuery, values)
         # insert into ranking tables
-        values = (user)
+        values = (user, )
         insertQuery = f"INSERT INTO dailyRanking (username) VALUES(%s)"
         self.cursor.execute(insertQuery, values)
         insertQuery = f"INSERT INTO weeklyRanking (username) VALUES(%s)"
@@ -127,19 +128,7 @@ class BaseDatabase():
 class Database(BaseDatabase):
     def clearDatabase(self):
         print("clearing database")
-        subprocess.run(["touch clear.sql"], shell=True, cwd=DB_DIR)
-        with open(f"{DB_DIR}drop.sql", "r") as readFile:
-            lines = readFile.readlines()
-            for i in range(len(lines)):
-                lines[i] = lines[i].replace("DB_HOST", self.host)
-                lines[i] = lines[i].replace("DB_USER", self.user)
-                lines[i] = lines[i].replace("DB_PASSWORD", self.password)
-                lines[i] = lines[i].replace("DB_NAME", self.name)
-            with open(f"{DB_DIR}clear.sql", "w") as writeFile:
-                for line in lines:
-                    writeFile.write(line)
-        subprocess.run(f"sudo mysql < {DB_DIR}clear.sql", shell=True)
-        subprocess.run(["rm clear.sql"], shell=True, cwd=DB_DIR)
+        subprocess.run(f"sudo mysql -e 'DROP DATABASE {self.name}' ", shell=True)
         print("cleared")
     def resetDaily(self):
         print("reseting daily database")
@@ -166,15 +155,14 @@ class Database(BaseDatabase):
         else:
             print("Username already taken")
             raise Exception("409\nUsername already taken")
-    def addPointsToUser(self, username, extraPoints):
-        self.cursor.execute("USE users")
+    def addPointsToUser(self, username:str, extraPoints:int):
+        print("adding points to user")
+        print(username)
+        print(extraPoints)
         self.cursor.execute(f"UPDATE users SET totalpoints = totalpoints + %s where username=%s", (extraPoints, username))
-        self.cursor.execute("USE dailyRanking")
-        self.cursor.execute(f"UPDATE users SET totalpoints = totalpoints + %s where username=%s", (extraPoints, username))
-        self.cursor.execute("USE weeklyRanking")
-        self.cursor.execute(f"UPDATE users SET totalpoints = totalpoints + %s where username=%s", (extraPoints, username))
-        self.cursor.execute("USE allTimeRanking")
-        self.cursor.execute(f"UPDATE users SET totalpoints = totalpoints + %s where username=%s", (extraPoints, username))
+        self.cursor.execute(f"UPDATE dailyRanking SET points = points + %s where username=%s", (extraPoints, username))
+        self.cursor.execute(f"UPDATE weeklyRanking SET points = points + %s where username=%s", (extraPoints, username))
+        self.cursor.execute(f"UPDATE allTimeRanking SET points = points + %s where username=%s", (extraPoints, username))
 
 if __name__ == "__main__":
     db = Database()

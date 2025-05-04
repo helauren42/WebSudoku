@@ -2,6 +2,10 @@ import re
 
 from pydantic import BaseModel, EmailStr, field_validator
 
+class PointsRequestData(BaseModel):
+    username:str
+    points:int
+
 class LoginRequest(BaseModel):
     username:str
     password:str
