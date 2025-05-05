@@ -47,12 +47,10 @@ async def signup(signup: SignupRequest):
     except Exception as e:
         if e.__str__().find("\n"):
             splitted = e.__str__().split('\n')
-            print(" !!!!: ", splitted)
             statusCode = int(splitted[0])
             message = splitted[1]
             print("Could not signup: ", message)
             return responses.JSONResponse(content={"status": "error", "message": message }, status_code=statusCode)
-    
         else:
             return responses.JSONResponse(content={"status": "error", "message": e.__str__() }, status_code=400)
 

@@ -1,8 +1,8 @@
 [Unit]
-Description=Truncate daily rankings sudoku table
+Description=Runs weekly reset sudoku service
 
 [Timer]
-OnCalendar=daily
+OnCalendar=weekly
 Persistent=True
 
 [Install]

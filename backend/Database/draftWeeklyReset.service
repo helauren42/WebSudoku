@@ -1,2 +1,6 @@
 [Unit]
-Description=Truncate weekly rankings sudoku table
+Description=Reset weekly rankings sudoku table
+
+[Service]
+Type=OneShot
+

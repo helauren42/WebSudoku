@@ -1,5 +1,5 @@
 [Unit]
-Description=Truncate daily rankings sudoku table
+Description=Reset daily rankings sudoku table
 
 [Service]
 Type=OneShot

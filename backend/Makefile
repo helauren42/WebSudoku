@@ -18,7 +18,11 @@ run:
 	$(VENV_DIR)/bin/python3 main.py
 
 clean: $(REMOVE_SERVICE_SCRIPT)
-	rm -rf $(VENV_DIR)
 	bash $(REMOVE_SERVICE_SCRIPT)
 
-.PHONY: all pymodules service run clean
+fclean: clean
+	rm -rf $(VENV_DIR)
+
+re: clean all
+
+.PHONY: all pymodules service run clean fclean
