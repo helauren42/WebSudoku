@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 
 import { HandleBoard, BOARD, setClickPos } from './HandleBoard';
 import { Account, ACCOUNT_PROFILE } from "./Account";
+import { PAGE_ACCOUNT } from "./Const";
 
 const MODE_INSERT = "insert"
 const MODE_NOTE = "note"
 
-export const RightSideButtons = ({ activeGame, selectedCell, BOARD, submitPuzzle, setSubmitPuzzle, loggedIn }) => {
+export const RightSideButtons = ({ activeGame, setActiveGame, selectedCell, BOARD, loggedIn }) => {
 	const [insertMode, setInsertMode] = useState(MODE_INSERT)
 	const buttonNumberClick = (stringNum) => {
 		const number = parseInt(stringNum)
@@ -28,22 +29,30 @@ export const RightSideButtons = ({ activeGame, selectedCell, BOARD, submitPuzzle
 	}
 	const addPointsToAccount = (async () => {
 		const points = BOARD.passSubmission()
-		await ACCOUNT_PROFILE.addTempPoints(points)
+		await ACCOUNT_PROFILE.addPoints(points)
 	})
-	useEffect(() => {
-		console.log("submit puzzle effect(): ", submitPuzzle)
+	const offerToLogin = () => {
+		const submitLogin = document.getElementById("submit-login")
+		submitLogin.style.display = "block"
 		const popup = document.getElementById("submit-puzzle")
-		if (submitPuzzle == false) {
-			popup.style.display = "none"
-			return
-		}
+		popup.style.display = "flex";
+		const messages = document.getElementById("message-content")
+		messages.textContent = `Log in now and add ${ACCOUNT_PROFILE.tempPoints} points to your account`
+	}
+	const submitPuzzle = (() => {
+		console.log("submit puzzle()")
+		const popup = document.getElementById("submit-puzzle")
+		if (activeGame)
+			addPointsToAccount()
+		if (!loggedIn)
+			offerToLogin()
+		setActiveGame(false)
+		return
 		console.log("get messages element by id")
-		const messages = document.getElementById("error-message-content")
+		const messages = document.getElementById("message-content")
 		popup.style.display = "flex"
 		popup.close()
 		popup.showModal()
-		addPointsToAccount()
-		return
 		if (BOARD.hasEmptyCell()) {
 			console.log("has empty cell")
 			messages.textContent = "Finish the puzzle before submitting"
@@ -54,13 +63,16 @@ export const RightSideButtons = ({ activeGame, selectedCell, BOARD, submitPuzzle
 		if (conflictCount > 0) {
 			const errors = errorCount == 1 ? "error" : "errors"
 			const conflicts = conflictCount == 1 ? "conflict" : "conflicts"
-			const elem = document.getElementById("error-message-content")
+			const elem = document.getElementById("message-content")
 			elem.textContent = `You have ${errorCount} ${errors} and ${conflictCount} ${conflicts} in your solution`
 		}
 		else {
-			addPointsToAccount()
+			if (loggedIn)
+				addPointsToAccount()
+			else
+				offerToLogin()
 		}
-	}, [submitPuzzle])
+	})
 
 	return (
 		<div id="right-side-elements">
@@ -79,14 +91,14 @@ export const RightSideButtons = ({ activeGame, selectedCell, BOARD, submitPuzzle
 					<button className="button-numbers" id="button-number-8" onClick={(e) => buttonNumberClick(e.target.innerText)}>8</button>
 					<button className="button-numbers" id="button-number-9" onClick={(e) => buttonNumberClick(e.target.innerText)}>9</button>
 				</div>
-				<button className="playButtons" id="submit-solution" onClick={() => setSubmitPuzzle(true)} > Submit</button>
+				<button className="playButtons" id="submit-solution" onClick={() => { if (BOARD.game) { console.log("clicked submit solution"); submitPuzzle(); } }} > Submit</button>
 				{/* <div id="timer"></div> */}
 			</div>
 		</div >
 	)
 }
 
-export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCurrentLevel, setSubmitPuzzle }) => {
+export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCurrentLevel, setSubmitPuzzle, setCurrentPage }) => {
 	function updateLevel(e) {
 		console.log("updating level: ", e.target.value)
 		switch (e.target.value) {
@@ -111,7 +123,9 @@ export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCu
 		const submitElem = document.getElementById("submit-puzzle")
 		submitElem.close()
 		submitElem.show()
-	})
+		const submitLogin = document.getElementById("submit-login")
+		submitLogin.style.display = "hide"
+	}, [])
 	return (
 		<div id="left-side">
 			<dialog id="submit-puzzle">
@@ -120,8 +134,8 @@ export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCu
 					<h2 id="submit-puzzle-title" ><u>Submission</u></h2>
 					<button id="submit-puzzle-cross" onClick={() => setSubmitPuzzle(false)}>X</button>
 				</div>
-				<p id="messages"><i id="error-message-content"></i></p>
-				<h5></h5>
+				<p id="messages"><i id="message-content"></i></p>
+				<button id="submit-login" className="playButtons" onClick={() => setCurrentPage(PAGE_ACCOUNT)} hidden>Login</button>
 			</dialog>
 			<div id="game-mode-buttons">
 				<select id="select-difficulty" className="playButtons" onChange={(e) => updateLevel(e)}>
@@ -160,12 +174,12 @@ export const GamePage = ({ gameState }) => {
 	return (
 		<>
 			< div id="game-page" >
-				<LeftSideButtons activeGame={activeGame} setActiveGame={setActiveGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} setSubmitPuzzle={setSubmitPuzzle} />
+				<LeftSideButtons activeGame={activeGame} setActiveGame={setActiveGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} setSubmitPuzzle={setSubmitPuzzle} setCurrentPage={setCurrentPage} />
 				<div id="my-canvas-container">
 					<canvas id="my-canvas" onClick={(e) => { setClickPos(e.clientX, e.clientY, activeGame, triggerClick, setCanvasClickedX, setCanvasClickedY, setTriggerClick) }} ></canvas>
 				</div>
 				<HandleBoard activeGame={activeGame} currentLevel={currentLevel} setCurrentLevel={setCurrentLevel} canvasClickedX={canvasClickedX} canvasClickedY={canvasClickedY} triggerClick={triggerClick} setCanvasClickedX={setCanvasClickedX} setCanvasClickedY={setCanvasClickedY} selectedCell={selectedCell} setSelectedCell={setSelectedCell} />
-				<RightSideButtons activeGame={activeGame} selectedCell={selectedCell} BOARD={BOARD} submitPuzzle={submitPuzzle} setSubmitPuzzle={setSubmitPuzzle} loggedIn={loggedIn} />
+				<RightSideButtons activeGame={activeGame} setActiveGame={setActiveGame} selectedCell={selectedCell} BOARD={BOARD} loggedIn={loggedIn} />
 			</div>
 		</>
 	)

@@ -14,7 +14,7 @@ const HomePage = ({ setCurrentPage }) => {
 			<div id="help-section">
 				<div className='help-subsection' id="points-section">
 					<h2>Points System</h2>
-					<p className='help-paragraph'>Base points per difficulty:<br />
+					<p className='help-paragraph'>
 						Easy: 50<br />
 						Medium: 90<br />
 						Hard: 300<br />
@@ -24,7 +24,8 @@ const HomePage = ({ setCurrentPage }) => {
 				<div className='help-subsection' id="keymap-section">
 					<h2>Keymaps</h2>
 					<p className='help-paragraph'>&lt;i&gt;: Toggle between insert and notes mode<br />
-						&lt;arrow keys&gt;: Move around the selection of a cell
+						&lt;arrow keys&gt;: Move around the selection of a cell<br />
+						&lt;1-9&gt;: Input number into the cell depends on insert or notes mode<br />
 					</p>
 				</div>
 			</div>

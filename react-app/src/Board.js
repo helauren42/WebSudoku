@@ -297,7 +297,7 @@ export class Board extends AbstractBoard {
 		}
 	}
 	async fetchAndDrawDynamicPuzzle(currentLevel) {
-		if (!this.game || this.game.level != currentLevel) {
+		if (!this.game) {
 			console.log(`new game ${!this.game ? "no active game" : "different level"}`)
 			const puzzleAndSolution = await this.fetchDynamicPuzzle(currentLevel);
 			this.game = new Game(currentLevel, puzzleAndSolution[0], puzzleAndSolution[1])

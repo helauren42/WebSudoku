@@ -11,14 +11,14 @@ class AccountProfile {
 		this.reset()
 	}
 	reset() {
-		this.username = undefined
-		this.email = undefined
+		this.username = null
+		this.email = null
 		this.hasPicture = false
-		this.picturePath = undefined
+		this.picturePath = null
 		this.totalPoints = 0
-		this.creationDay = undefined
-		this.displayedUsername = undefined
-		this.displayedEmail = undefined
+		this.creationDay = null
+		this.displayedUsername = null
+		this.displayedEmail = null
 	}
 	/**
 	* @param {string} name
@@ -31,14 +31,19 @@ class AccountProfile {
 	login(username, email, totalPoints, creationDay, hasPicture = false, picturePath = null) {
 		console.log("account profile login")
 		this.username = username
+		if (this.tempPoints > 0) {
+			this.sendPoints(this.tempPoints).then(console.log('sent cached points on login')).catch(console.log("error sending points on login"))
+			this.tempPoints = 0
+		}
 		this.email = email
 		this.hasPicture = hasPicture
 		this.picturePath = picturePath
-		this.totalPoints = totalPoints
+		this.totalPoints = totalPoints + this.tempPoints
 		console.log("this total points: ", this.totalPoints)
 		this.creationDay = creationDay
 		this.displayedUsername = this.trimDisplay(this.username, 18)
 		this.displayedEmail = this.trimDisplay(this.email, 30)
+		console.log(this)
 	}
 	logout() {
 		this.reset()
@@ -59,12 +64,19 @@ class AccountProfile {
 			})
 		console.log("data: ", data)
 	}
-	async addTempPoints(addPoints) {
+	async addPoints(addPoints) {
+		console.log("pre temp points: ", this.tempPoints)
 		console.log("adding temp points: ", addPoints)
+		console.log("to user: ", this.username)
 		this.tempPoints += addPoints
-		if (this.login != undefined) {
+		console.log("total temp points: ", this.tempPoints)
+		if (this.username) {
 			await this.sendPoints(this.tempPoints)
+			this.totalPoints += this.tempPoints
 			this.tempPoints = 0
+		}
+		else {
+			console.log("Not sending points, user is not logged in")
 		}
 	}
 }
