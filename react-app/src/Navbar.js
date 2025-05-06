@@ -33,8 +33,10 @@ export const Navbar = ({ setCurrentPage, loggedIn, setLoggedIn }) => {
 					<button className='nav-button' onClick={() => setCurrentPage(PAGE_GAME)} >Play</button>
 				</div>
 				<div id="user-section" onClick={() => setCurrentPage(PAGE_ACCOUNT)}>
-					<img id="user-icon" src={UserIcon}></img>
-					<p id="user-text">{loggedIn ? 'account' : 'login'}</p>
+					<div id="user-subsection">
+						<img id="user-icon" src={UserIcon}></img>
+						<p id="user-text">{loggedIn ? 'account' : 'login'}</p>
+					</div>
 				</div>
 			</div>
 		</div >

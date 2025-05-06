@@ -87,6 +87,12 @@ html {
 	font-size: 1rem;
 }
 
+#user-subsection {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 #user-section:hover {
 	transform: scale(1.1);
 	transform-origin: right;
