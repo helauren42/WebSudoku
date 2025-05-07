@@ -34,13 +34,11 @@ async def login(login: LoginRequest):
         accountProfile = db.login(login)
         userSessionToken = str(uuid4())
         db.storeSessionId(userSessionToken, accountProfile["username"])
+        response = responses.JSONResponse(content={ "status": "success", "accountProfile": accountProfile, "userSessionToken": userSessionToken }, status_code=200)
+        return response
     except Exception as e:
         print("error message: ", e.__str__())
         return responses.JSONResponse(content={"status": "error", "message": e.__str__() }, status_code=401)
-    print("sending token: ", userSessionToken)
-    response = responses.JSONResponse(content={ "status": "success", "accountProfile": accountProfile }, status_code=200)
-    response.set_cookie(key="userSessionToken", value=userSessionToken, httponly=True, secure=False, samesite='lax')
-    return response
 @app.post("/signup")
 async def signup(signup: SignupRequest):
     print(signup)
@@ -48,8 +46,7 @@ async def signup(signup: SignupRequest):
         accountProfile:dict = db.signup(signup)
         userSessionToken = str(uuid4())
         db.storeSessionId(userSessionToken, accountProfile["username"])
-        response = responses.JSONResponse(content={ "status": "success", "accountProfile": accountProfile }, status_code=200)
-        response.set_cookie(key="userSessionToken", value=userSessionToken, httponly=True, secure=False, samesite='lax')
+        response = responses.JSONResponse(content={ "status": "success", "accountProfile": accountProfile, "userSessionToken": userSessionToken }, status_code=200)
         return response
     except Exception as e:
         if e.__str__().find("\n"):
