@@ -126,13 +126,17 @@ export const LeftSideButtons = ({ activeGame, setActiveGame, currentLevel, setCu
 		const submitLogin = document.getElementById("submit-login")
 		submitLogin.style.display = "hide"
 	}, [])
+	const closeSubmissionWindow = () => {
+		const popup = document.getElementById("submit-puzzle")
+		popup.style.display = "none"
+	}
 	return (
 		<div id="left-side">
 			<dialog id="submit-puzzle">
 				<div id="submit-puzzle-nav">
 					<h4 ></h4>
 					<h2 id="submit-puzzle-title" ><u>Submission</u></h2>
-					<button id="submit-puzzle-cross" onClick={() => setSubmitPuzzle(false)}>X</button>
+					<button id="submit-puzzle-cross" onClick={() => closeSubmissionWindow()}>x</button>
 				</div>
 				<p id="messages"><i id="message-content"></i></p>
 				<button id="submit-login" className="playButtons" onClick={() => setCurrentPage(PAGE_ACCOUNT)} hidden>Login</button>

@@ -31,6 +31,7 @@ class AccountProfile {
 	login(username, email, totalPoints, creationDay, hasPicture = false, picturePath = null) {
 		console.log("account profile login")
 		this.username = username
+		this.totalPoints = totalPoints + this.tempPoints
 		if (this.tempPoints > 0) {
 			this.sendPoints(this.tempPoints).then(console.log('sent cached points on login')).catch(console.log("error sending points on login"))
 			this.tempPoints = 0
@@ -38,7 +39,6 @@ class AccountProfile {
 		this.email = email
 		this.hasPicture = hasPicture
 		this.picturePath = picturePath
-		this.totalPoints = totalPoints + this.tempPoints
 		console.log("this total points: ", this.totalPoints)
 		this.creationDay = creationDay
 		this.displayedUsername = this.trimDisplay(this.username, 18)
@@ -108,6 +108,7 @@ const SignupSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
 		const data = await fetch(`http://${SOCKET_ADDRESS}/signup`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
+			credentials: 'include',
 			body: body
 		}).then((response) => { console.log(response.headers.get("content-type")); return response.json() })
 		const message = data["message"]
@@ -123,6 +124,7 @@ const SignupSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
 			setCurrentSection(SECTIONS.profile)
 			setLoggedIn(true)
 			ACCOUNT_PROFILE.login(accountProfileData.username, accountProfileData.email, accountProfileData.totalPoints, accountProfileData.creationDay, accountProfileData.hasPicture, accountProfileData.picturePath,)
+			document.cookie = `userSessionToken=${data["userSessionToken"]} path=/`
 		}
 	})
 	return (
@@ -149,10 +151,10 @@ const SignupSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
 })
 
 const ProfileSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
-	if (ACCOUNT_PROFILE.username == undefined) {
-		ACCOUNT_PROFILE.login("Somebody", "Someone's@email.com", 0, [2024, 3, 3])
-	}
 	console.log(ACCOUNT_PROFILE)
+	useEffect(() => {
+
+	}, [])
 	return (
 		<div id="profile-container">
 			<div className="profile-line">
@@ -191,15 +193,19 @@ const LoginSection = (({ currentSection, setCurrentSection, setLoggedIn }) => {
 		const data = await fetch(`http://${SOCKET_ADDRESS}/login`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
+			credentials: 'include',
 			body: JSON.stringify({ username, password }),
-		}).then((response) => response.json())
+		}).then((response) => {
+			return response.json()
+		})
 		console.log(data)
-		if (data["message"] == "success") {
+		if (data["status"] == "success") {
 			console.log("Login successful:", data);
 			setLoggedIn(true)
 			setCurrentSection(SECTIONS.profile)
 			const accountProfileData = data["accountProfile"]
-			ACCOUNT_PROFILE.login(accountProfileData.username, accountProfileData.email, accountProfileData.totalPoints, accountProfileData.creationDay, accountProfileData.hasPicture, accountProfileData.picturePath,)
+			ACCOUNT_PROFILE.login(accountProfileData.username, accountProfileData.email, accountProfileData.totalPoints, accountProfileData.creationDay, accountProfileData.hasPicture, accountProfileData.picturePath)
+			document.cookie = `userSessionToken=${data["userSessionToken"]} path=/`
 		}
 		else {
 			console.log("Login error:", data);
