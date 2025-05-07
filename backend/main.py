@@ -3,6 +3,7 @@ from fastapi import FastAPI, responses, Request
 import uvicorn
 import random
 from fastapi.middleware.cors import CORSMiddleware
+from uuid import uuid4
 
 from handleRequests import LoginRequest, SignupRequest, PointsRequestData
 from const import HOST, PORT, PROJECT_DIR
@@ -31,19 +32,25 @@ async def home():
 async def login(login: LoginRequest):
     try:
         accountProfile = db.login(login)
+        userSessionToken = str(uuid4())
+        db.storeSessionId(userSessionToken, accountProfile["username"])
     except Exception as e:
         print("error message: ", e.__str__())
         return responses.JSONResponse(content={"status": "error", "message": e.__str__() }, status_code=401)
-    return responses.JSONResponse(content={ "status": "success", "message": "success", "accountProfile": accountProfile }, status_code=200)
-
+    print("sending token: ", userSessionToken)
+    response = responses.JSONResponse(content={ "status": "success", "accountProfile": accountProfile }, status_code=200)
+    response.set_cookie(key="userSessionToken", value=userSessionToken, httponly=True, secure=False, samesite='lax')
+    return response
 @app.post("/signup")
 async def signup(signup: SignupRequest):
     print(signup)
     try:
         accountProfile:dict = db.signup(signup)
-        print(accountProfile)
-        print(type(accountProfile))
-        return responses.JSONResponse(content={ "status": "success", "message": "signup succesfull", "accountProfile": accountProfile }, status_code=200)
+        userSessionToken = str(uuid4())
+        db.storeSessionId(userSessionToken, accountProfile["username"])
+        response = responses.JSONResponse(content={ "status": "success", "accountProfile": accountProfile }, status_code=200)
+        response.set_cookie(key="userSessionToken", value=userSessionToken, httponly=True, secure=False, samesite='lax')
+        return response
     except Exception as e:
         if e.__str__().find("\n"):
             splitted = e.__str__().split('\n')

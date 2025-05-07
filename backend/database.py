@@ -116,7 +116,7 @@ class BaseDatabase():
         if fetched == None:
             return True
         return False
-    def fetchUserData(self, username):
+    def fetchUserData(self, username) -> UserData:
         self.cursor.execute("SELECT * FROM users WHERE username=%s", (username,))
         columns = self.cursor.fetchone()
         print("!!! COLUMNS:")
@@ -136,7 +136,7 @@ class Database(BaseDatabase):
     def resetWeekly(self):
         print("reseting weekly database")
         self.cursor.execute(f"UPDATE weeklyRanking SET points=0")
-    def login(self, loginObject: LoginRequest):
+    def login(self, loginObject: LoginRequest)-> dict:
         print("db.login()")
         if not self.validLoginUsername(loginObject.username):
             raise Exception("username does not exist")
@@ -176,6 +176,10 @@ class Database(BaseDatabase):
         rankings = self.cursor.fetchall()
         print("Rankings fetched: ", rankings)
         return rankings
+    def storeSessionId(self, sessionToken:str, username:str):
+        self.cursor.execute("UPDATE users SET sessionToken = %s where username = %s", (sessionToken, username))
+        return
+
 
 if __name__ == "__main__":
     db = Database()
