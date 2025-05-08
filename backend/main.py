@@ -1,5 +1,6 @@
 import json
-from fastapi import FastAPI, responses, Request
+from fastapi import FastAPI, responses
+import fastapi
 import uvicorn
 import random
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,17 +29,33 @@ app.add_middleware(
 async def home():
     return responses.HTMLResponse('omg')
 
+@app.get("/userData")
+async def getUserData(req: fastapi.Request):
+    print(req.headers)
+    try:
+        print("getUserData request")
+        token = req.headers["authorization"].split(" ")[1]
+        print("token: ", token)
+        userData = db.tokenfetchUserData(token)
+        print("found user: ", userData)
+        if userData == None:
+            return responses.JSONResponse(content={"status":"error", "message": "token not active anymore"}, status_code=400)
+        return responses.JSONResponse(content={"status":"success", "accountProfile": userData.to_dict()})
+    except Exception as e:
+        return responses.JSONResponse(content={"status":"error", "message": e.__str__()}, status_code=400)
+
 @app.post("/login")
 async def login(login: LoginRequest):
     try:
         accountProfile = db.login(login)
         userSessionToken = str(uuid4())
         db.storeSessionId(userSessionToken, accountProfile["username"])
-        response = responses.JSONResponse(content={ "status": "success", "accountProfile": accountProfile, "userSessionToken": userSessionToken }, status_code=200)
+        response = responses.JSONResponse(content={ "status": "success", "accountProfile": accountProfile, "userSessionToken": userSessionToken })
         return response
     except Exception as e:
         print("error message: ", e.__str__())
         return responses.JSONResponse(content={"status": "error", "message": e.__str__() }, status_code=401)
+
 @app.post("/signup")
 async def signup(signup: SignupRequest):
     print(signup)

@@ -6,6 +6,7 @@ import mysql.connector
 from mysql.connector.abstracts import MySQLCursorAbstract
 import sys
 import subprocess
+from typing import Optional
 
 from const import PROJECT_DIR
 from handleRequests import LoginRequest, SignupRequest
@@ -119,10 +120,16 @@ class BaseDatabase():
     def fetchUserData(self, username) -> UserData:
         self.cursor.execute("SELECT * FROM users WHERE username=%s", (username,))
         columns = self.cursor.fetchone()
-        print("!!! COLUMNS:")
-        print(type(columns))
-        print(columns)
         userData = UserData(username, columns[4], columns[5], columns[6], columns[1])
+        return userData
+    def tokenfetchUserData(self, token:str) -> Optional[UserData]:
+        print("searching for token: ", token)
+        self.cursor.execute("SELECT * FROM users WHERE sessionToken=%s", (token,))
+        columns = self.cursor.fetchone()
+        print("columns: ", columns)
+        if columns == None:
+           return None
+        userData = UserData(columns[2], columns[4], columns[5], columns[6], columns[1])
         return userData
 
 class Database(BaseDatabase):
